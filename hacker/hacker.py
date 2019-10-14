@@ -5,10 +5,13 @@ import os
 BLACK = (0, 0, 0)
 GRAY = (127, 127, 127)
 WHITE = (255, 255, 255)
+LIGHTBLUE = (58, 110, 165)
+LIGHTGRAY = (212,208,200)
 
 DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
+
 
 text = '''This is a
 multi-line
@@ -22,21 +25,27 @@ class App:
 
     def __init__(self):
         pygame.init()
-        self.rect = Rect(0, 0, 1800, 1000)
-        self.background_color = GRAY
+        self.rect = Rect(0, 0, 1920, 1080,)
+        self.background_color = LIGHTBLUE
         self.title = 'Hacker Desktop Environment'
         self.screen = pygame.display.set_mode()
         self.children = []
-        App.screen = pygame.display.set_mode(self.rect.size)
+        App.screen = pygame.display.set_mode(self.rect.size, FULLSCREEN)
         pygame.display.set_caption(self.title)
 
-        x, y = 20, 20
-        dy = 120
-        Icon(self, 'icons/address-book.png', pos=(x, y)); y += dy
-        Icon(self, 'icons/device-camera.png', pos=(x, y)); y += dy
-        Icon(self, 'icons/device-computer.png', pos=(x, y)); y += dy
-        Icon(self, 'icons/device-drive.png', pos=(x, y)); y += dy
-        Icon(self, 'icons/device-laptop.png', pos=(x, y))
+        x, y = 20, 50
+        dy = 160
+        icon1 = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
+        icon1.movable = False
+        email_button = Button(self, 'icons2/email.png', pos=(x, y), cmd='App.email_win.visible = not App.email_win.visible'); y += dy
+        #icon2.movable = False
+        icon3 = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
+        icon3.movable = False
+
+        App.email_win = Icon(self, 'windows/inbox_win.png', pos=(x, y)); y += dy
+        
+        # Icon(self, 'icons/device-laptop.png', pos=(x, y))
+        # Icon(self, 'icons/device-camera.png', pos=(x, y)); y += dy
 
         folder = Window(self, 'Target user', Rect(150, 50, 400, 300))
         Icon(folder, 'icons/user-male.png', pos=(20, 60))
@@ -47,15 +56,19 @@ class App:
         TextFile(self, 'Text.txt', text, Rect(400, 100, 500, 200))
 
         Terminal(self, 'Terminal', '> mkdir hacking_files', Rect(400,350, 500, 200))
-        
+
+        Rectangle(self, Rect(0, 1015, 1920, 65))
+
+        quit_button = Button(self, "button/shutdown.png", pos=(10, 1022), cmd='App.running = False')
+        # quit_button = Button(self, "button/shutdown.png", pos=(110, 1022), cmd='print(123)')
         
     def run(self):
         """Run the main event loop."""
-        running = True
-        while running:
+        App.running = True
+        while App.running:
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    running = False
+                    App.running = False
 
                 if event.type == MOUSEBUTTONDOWN:
                     App.selected = None
@@ -75,9 +88,9 @@ class App:
 
 
 class Node:
-    sel_color = DARKRED
+    sel_color = GRAY
     """Create a node class for embedded objects."""
-    def __init__(self, parent, rect=Rect(20, 20, 200, 100), **options):
+    def __init__(self, parent, rect=Rect(20, 60, 200, 100), **options):
 
         self.parent = parent
         self.parent.children.append(self)
@@ -190,8 +203,56 @@ class Icon(Node):
 
     def draw(self, pos=(0, 0)):
         super().draw(pos)
+        if self.visible:
+            App.screen.blit(self.img, self.rect.move(pos))
+
+
+class Button(Node):
+    def __init__(self, parent, file, pos=(100, 100), cmd=''):
+        super().__init__(parent, pos)
+
+        self.file = file
+        self.img = pygame.image.load(file)
+        self.rect = self.img.get_rect()
+        self.rect.topleft = pos
+        self.outlined = False
+        self.movable = False
+        self.cmd = cmd
+
+    def draw(self, pos=(0, 0)):
+        super().draw(pos)
         App.screen.blit(self.img, self.rect.move(pos))
 
+    def do_event(self, event):
+        """Handle mouse clicks and key press events."""
+
+        if event.type == MOUSEBUTTONDOWN:
+            self.abs_rect = self.rect.move(self.parent.rect.topleft)
+
+            if self.abs_rect.collidepoint(event.pos) and self.selectable:
+
+                App.selected = self
+                self.click_pos = event.pos
+                exec(self.cmd)
+
+class Rectangle(Node):
+    """Create a rectangle object."""
+    def __init__(self, parent, rect=Rect(100, 100, 300, 200), **options):
+        super().__init__(parent, rect)
+
+        self.rect = rect
+        self.border_color = BLACK
+        self.border_width = 0
+        self.background_color = LIGHTGRAY
+        self.outlined = False
+        self.selectable = False
+        
+    def draw(self, pos=(0, 0)):
+        """Draw rectangle."""
+        super().draw(pos)
+        pygame.draw.rect(App.screen, self.background_color, self.rect, 0)
+        for child in self.children:
+            child.draw(self.rect.topleft)
 
 class Window(Node):
     """Create a window object."""
@@ -257,6 +318,4 @@ class Terminal(Window):
 
 
 if __name__ == '__main__':
-    app = App()
-    app.title = 'Valentin Hacker GAME'
-    app.run()
+    App().run()
