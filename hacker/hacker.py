@@ -35,11 +35,11 @@ class App:
 
         x, y = 20, 50
         dy = 160
-        icon1 = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
+        icon1 = Icon(self, 'icons/terminal.png', pos=(x, y)); y += dy
         icon1.movable = False
-        email_button = Button(self, 'icons2/email.png', pos=(x, y), cmd='App.email_win.visible = not App.email_win.visible'); y += dy
+        email_button = Button(self, 'icons/email.png', pos=(x, y), cmd='App.email_win.visible = not App.email_win.visible'); y += dy
         #icon2.movable = False
-        icon3 = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
+        icon3 = Icon(self, 'icons/decrypt.png', pos=(x, y)); y += dy
         icon3.movable = False
 
         App.email_win = Icon(self, 'windows/inbox_win.png', pos=(x, y)); y += dy
