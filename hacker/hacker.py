@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import os
-#test
+
 BLACK = (0, 0, 0)
 GRAY = (127, 127, 127)
 WHITE = (255, 255, 255)
