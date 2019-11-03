@@ -43,9 +43,6 @@ class App:
         icon3.movable = False
 
         App.email_win = Icon(self, 'windows/inbox_win.png', pos=(x, y)); y += dy
-        
-        # Icon(self, 'icons/device-laptop.png', pos=(x, y))
-        # Icon(self, 'icons/device-camera.png', pos=(x, y)); y += dy
 
         folder = Window(self, 'Target user', Rect(150, 50, 400, 300))
         Icon(folder, 'icons/user-male.png', pos=(20, 60))
