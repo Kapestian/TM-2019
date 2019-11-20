@@ -29,7 +29,7 @@ class App:
         self.background_color = LIGHTBLUE
         self.title = 'Hacker Desktop Environment'
         self.children = []
-        self.flags = FULLSCREEN
+        self.flags = 0
         self.t0 = time.time()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
@@ -48,7 +48,6 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
 
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
-        # quit_button = Button(self, "button/shutdown.png", pos=(110, 1022), cmd='print(123)')
         
     def run(self):
         """Run the main event loop."""
@@ -64,9 +63,6 @@ class App:
                     child.do_event(event)
 
             self.draw()
-            t = time.time()
-            print(t-self.t0)
-            self.t0 = t
 
         pygame.quit()
 
