@@ -26,13 +26,13 @@ class App:
 
     def __init__(self):
         pygame.init()
-        self.rect = Rect(0, 0, 1920, 1080)
+        self.rect = Rect(0, 0, 1280, 720)
+        #self.rect = Rect(0, 0, 1920, 1080)
         self.background_color = LIGHTBLUE
         self.title = 'Hacker Desktop Environment'
         #self.screen = pygame.display.set_mode()
         self.children = []
         self.flags = FULLSCREEN
-        #self.flags = 0
         self.t0 = time.time()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
@@ -58,9 +58,9 @@ class App:
 
         Terminal(self, 'Terminal', '> mkdir hacking_files', Rect(400,350, 500, 200))
 
-        Rectangle(self, Rect(0, 1015, 1920, 65))
+        Rectangle(self, Rect(0, 655, 1920, 65))
 
-        quit_button = Button(self, "button/shutdown.png", pos=(10, 1022), cmd='App.running = False')
+        quit_button = Button(self, "button/shutdown.png", pos=(10, 655), cmd='App.running = False')
         # quit_button = Button(self, "button/shutdown.png", pos=(110, 1022), cmd='print(123)')
         
     def run(self):
