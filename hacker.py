@@ -8,7 +8,6 @@ GRAY = (127, 127, 127)
 WHITE = (255, 255, 255)
 LIGHTBLUE = (58, 110, 165)
 LIGHTGRAY = (212,208,200)
-
 DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
@@ -29,37 +28,26 @@ class App:
         self.rect = Rect(0, 0, 1280, 720)
         self.background_color = LIGHTBLUE
         self.title = 'Hacker Desktop Environment'
-        #self.screen = pygame.display.set_mode()
         self.children = []
         self.flags = FULLSCREEN
         self.t0 = time.time()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
 
-        x, y = 20, 50
+        x, y = 20, 20
         dy = 160
-        Terminal_icon = Icon(self, 'icons/terminal.png', pos=(x, y)); y += dy
-        Terminal_icon.movable = False
+        terminal_icon = Icon(self, 'icons/terminal.png', pos=(x, y)); y += dy
+        terminal_icon.movable = False
         email_button = Button(self, 'icons/email.png', pos=(x, y), cmd='App.email_win.visible = not App.email_win.visible'); y += dy
         #icon2.movable = False
-        icon3 = Icon(self, 'icons/decrypt.png', pos=(x, y)); y += dy
-        icon3.movable = False
+        decryptor_icon = Icon(self, 'icons/decrypt.png', pos=(x, y)); y += dy
+        decryptor_icon.movable = False
 
         App.email_win = Icon(self, 'windows/inbox_win.png', pos=(x, y)); y += dy
 
-        folder = Window(self, 'Target user', Rect(150, 50, 400, 300))
-        Icon(folder, 'icons/user-male.png', pos=(20, 60))
-        Icon(folder, 'icons/user-female.png', pos=(150, 60))
+        Rectangle(self, Rect(0, 660, 1920, 65))
 
-        Image(self, 'images/hacker.jpg', pos=(120, 260))
-        Text(self, 'Hacker Environment', pos=(300, 10))
-        TextFile(self, 'Text.txt', text, Rect(400, 100, 500, 200))
-
-        Terminal(self, 'Terminal', '> mkdir hacking_files', Rect(400,350, 500, 200))
-
-        Rectangle(self, Rect(0, 655, 1920, 65))
-
-        quit_button = Button(self, "button/shutdown.png", pos=(10, 655), cmd='App.running = False')
+        quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
         # quit_button = Button(self, "button/shutdown.png", pos=(110, 1022), cmd='print(123)')
         
     def run(self):
@@ -90,7 +78,7 @@ class App:
         pygame.display.flip()
 
 
-class Node:
+class Node: 
     sel_color = GRAY
     """Create a node class for embedded objects."""
     def __init__(self, parent, rect=Rect(20, 60, 200, 100), **options):
@@ -280,44 +268,6 @@ class Window(Node):
         pygame.draw.rect(App.screen, self.border_color, self.rect, self.border_width)
         for child in self.children:
             child.draw(self.rect.topleft)
-
-class Image(Window):
-    """Display an image in a window."""
-    def __init__(self, parent, file, pos=(100, 100)):
-        super().__init__(parent, file, pos)
-
-        self.title = file
-        self.titlebar_color = DARKRED
-        self.img = pygame.image.load(file)
-        # self.img = pygame.transform.scale(self.img, (80, 80))
-        self.rect = self.img.get_rect()
-        self.rect.topleft = pos
-
-    def draw(self, pos=(0, 0)):
-        super().draw(pos)
-        App.screen.blit(self.img, self.rect.move(pos).move(0, 40))
-        
-class TextFile(Window):
-    """Create a folder object."""
-    def __init__(self, parent, name, lines, rect):
-        super().__init__(parent, name, rect)
-
-        x, y = 10, 50
-        for line in lines.splitlines():
-            Text(self, line, pos=(x, y), movable=False, outlined=False)
-            y += 30
-
-class Terminal(Window):
-    """Create a terminal object."""
-    def __init__(self, parent, name, lines, rect):
-        super().__init__(parent, name, rect)
-        self.background_color = BLACK
-        self.titlebar_color = DARKGREEN
-
-        x, y = 10, 50
-        for line in lines.splitlines():
-            Text(self, line, pos=(x, y), movable=False, outlined=False, fontcolor=WHITE)
-            y += 30
 
 
 if __name__ == '__main__':
