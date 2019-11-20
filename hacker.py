@@ -31,8 +31,8 @@ class App:
         self.title = 'Hacker Desktop Environment'
         #self.screen = pygame.display.set_mode()
         self.children = []
-        #self.flags = FULLSCREEN
-        self.flags = 0
+        self.flags = FULLSCREEN
+        #self.flags = 0
         self.t0 = time.time()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
