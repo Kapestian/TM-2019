@@ -27,7 +27,6 @@ class App:
     def __init__(self):
         pygame.init()
         self.rect = Rect(0, 0, 1280, 720)
-        #self.rect = Rect(0, 0, 1920, 1080)
         self.background_color = LIGHTBLUE
         self.title = 'Hacker Desktop Environment'
         #self.screen = pygame.display.set_mode()
@@ -39,8 +38,8 @@ class App:
 
         x, y = 20, 50
         dy = 160
-        icon1 = Icon(self, 'icons/terminal.png', pos=(x, y)); y += dy
-        icon1.movable = False
+        Terminal_icon = Icon(self, 'icons/terminal.png', pos=(x, y)); y += dy
+        Terminal_icon.movable = False
         email_button = Button(self, 'icons/email.png', pos=(x, y), cmd='App.email_win.visible = not App.email_win.visible'); y += dy
         #icon2.movable = False
         icon3 = Icon(self, 'icons/decrypt.png', pos=(x, y)); y += dy
