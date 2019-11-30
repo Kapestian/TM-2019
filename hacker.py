@@ -42,7 +42,7 @@ class App:
         #icon2.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
         decryptor_icon.movable = False
-        #App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
+        App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
         Rectangle(self, Rect(0, 660, 1920, 65))
 
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
