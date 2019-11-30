@@ -47,7 +47,6 @@ class App:
 
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
         
-        terminal = Window(self,'windows2/inbox_win.png')
     def run(self):
         """Run the main event loop."""
         App.running = True
@@ -242,28 +241,28 @@ class Rectangle(Node):
 
 class Window(Node):
     """Create a window object."""
-    def __init__(self, parent, image):
-        super().__init__(parent)
+    def __init__(self, parent, title, rect=Rect(100, 100, 300, 200)):
+        super().__init__(parent, rect)
 
-        self.back_image = image
-        self.active = True
-        self.parent = parent
+        self.title = title
+        self.rect = rect
         self.border_color = BLACK
         self.border_width = 3
-        self.movable = True
-        self.selectable = True
+        self.background_color = WHITE
+        self.titlebar_color = DARKBLUE
+        self.outlined = False
         
-    def draw(self, pos=(0, 0)):
-        if self.active == True:
-            """Draw window with title bar."""
-            super().draw(pos)
-            #draws background
-            winimage = pygame.image.load(self.back_image)
-            winimage.convert()
-            App.screen.blit(winimage,pos)
+        Text(self, title, fontcolor=WHITE, pos=(10, 10), movable=False, selectable=False, outlined=False)
 
-            for child in self.children:
-                child.draw(self.rect.topleft)
+    def draw(self, pos=(0, 0)):
+        """Draw window with title bar."""
+        super().draw(pos)
+        pygame.draw.rect(App.screen, self.background_color, self.rect, 0)
+        pygame.draw.rect(App.screen, self.titlebar_color, (*self.rect.topleft, self.rect.width, 40))
+        pygame.draw.rect(App.screen, self.border_color, self.rect, self.border_width)
+        for child in self.children:
+            child.draw(self.rect.topleft)
+
 
 
 if __name__ == '__main__':
