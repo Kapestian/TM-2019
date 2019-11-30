@@ -258,7 +258,17 @@ class Window(Node):
         for child in self.children:
             child.draw(self.rect.topleft)
 
+class Terminal(Window):
+    """Create a terminal object."""
+    def __init__(self, parent, name, lines, rect):
+        super().__init__(parent, name, rect)
+        self.background_color = BLACK
+        self.titlebar_color = DARKGREEN
 
+        x, y = 10, 50
+        for line in lines.splitlines():
+            Text(self, line, pos=(x, y), movable=False, outlined=False, fontcolor=WHITE)
+            y += 30
 
 if __name__ == '__main__':
     App().run()
