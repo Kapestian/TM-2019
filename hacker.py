@@ -241,15 +241,10 @@ class Rectangle(Node):
 
 class Window(Node):
     """Create a window object."""
-    def __init__(self, parent, title, rect=Rect(100, 100, 300, 200)):
+    def __init__(self, parent, rect=Rect(100, 100, 300, 200)):
         super().__init__(parent, rect)
 
-        self.title = title
         self.rect = rect
-        self.border_color = BLACK
-        self.border_width = 3
-        self.background_color = WHITE
-        self.titlebar_color = DARKBLUE
         self.outlined = False
         
         Text(self, title, fontcolor=WHITE, pos=(10, 10), movable=False, selectable=False, outlined=False)
