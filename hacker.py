@@ -44,7 +44,7 @@ class App:
         decryptor_icon.movable = False
         App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
         Rectangle(self, Rect(0, 660, 1920, 65))
-
+        Terminal(self, '> mkdir hacking_files')
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
         
     def run(self):
@@ -241,27 +241,24 @@ class Rectangle(Node):
 
 class Window(Node):
     """Create a window object."""
-    def __init__(self, parent, rect=Rect(100, 100, 300, 200)):
+    def __init__(self, parent, imgpath):
         super().__init__(parent, rect)
-
-        self.rect = rect
+        self.imgpath = imgpath
         self.outlined = False
         
-        Text(self, title, fontcolor=WHITE, pos=(10, 10), movable=False, selectable=False, outlined=False)
+        #Text(self, title, fontcolor=WHITE, pos=(10, 10), movable=False, selectable=False, outlined=False)
 
-    def draw(self, pos=(0, 0)):
-        """Draw window with title bar."""
+    def draw(self, img, pos=(0, 0)):
+        """Draw window."""
         super().draw(pos)
-        pygame.draw.rect(App.screen, self.background_color, self.rect, 0)
-        pygame.draw.rect(App.screen, self.titlebar_color, (*self.rect.topleft, self.rect.width, 40))
-        pygame.draw.rect(App.screen, self.border_color, self.rect, self.border_width)
+        
         for child in self.children:
             child.draw(self.rect.topleft)
 
 class Terminal(Window):
     """Create a terminal object."""
-    def __init__(self, parent, name, lines, rect):
-        super().__init__(parent, name, rect)
+    def __init__(self, parent, lines):
+        super().__init__(parent)
 
         x, y = 10, 50
         for line in lines.splitlines():
