@@ -262,8 +262,6 @@ class Terminal(Window):
     """Create a terminal object."""
     def __init__(self, parent, name, lines, rect):
         super().__init__(parent, name, rect)
-        self.background_color = BLACK
-        self.titlebar_color = DARKGREEN
 
         x, y = 10, 50
         for line in lines.splitlines():
