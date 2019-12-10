@@ -44,7 +44,7 @@ class App:
         decryptor_icon.movable = False
         App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
         Rectangle(self, Rect(0, 660, 1920, 65))
-        Terminal(self, '> mkdir hacking_files')
+        Terminal(self, 'Terminal', '> mkdir hacking_files', Rect(400,350, 500, 200))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
         
     def run(self):
@@ -241,12 +241,53 @@ class Rectangle(Node):
 
 class Window(Node):
     """Create a window object."""
-    def __init__(self, parent, imgpath):
+    def __init__(self, parent, title, rect=Rect(100, 100, 300, 200)):
         super().__init__(parent, rect)
-        self.imgpath = imgpath
+
+        self.title = title
+        self.rect = rect
+        self.border_color = BLACK
+        self.border_width = 3
+        self.background_color = WHITE
+        self.titlebar_color = DARKBLUE
         self.outlined = False
         
-        #Text(self, title, fontcolor=WHITE, pos=(10, 10), movable=False, selectable=False, outlined=False)
+        Text(self, title, fontcolor=WHITE, pos=(10, 10), movable=False, selectable=False, outlined=False)
+
+    def draw(self, pos=(0, 0)):
+        """Draw window with title bar."""
+        super().draw(pos)
+        pygame.draw.rect(App.screen, self.background_color, self.rect, 0)
+        pygame.draw.rect(App.screen, self.titlebar_color, (*self.rect.topleft, self.rect.width, 40))
+        pygame.draw.rect(App.screen, self.border_color, self.rect, self.border_width)
+        for child in self.children:
+            child.draw(self.rect.topleft)
+
+class Image(Window):
+    """Display an image in a window."""
+    def __init__(self, parent, file, pos=(100, 100)):
+        super().__init__(parent, file, pos)
+
+        self.title = file
+        self.titlebar_color = DARKRED
+        self.img = pygame.image.load(file)
+        # self.img = pygame.transform.scale(self.img, (80, 80))
+        self.rect = self.img.get_rect()
+        self.rect.topleft = pos
+
+    def draw(self, pos=(0, 0)):
+        super().draw(pos)
+        App.screen.blit(self.img, self.rect.move(pos).move(0, 40))
+        
+class TextFile(Window):
+    """Create a folder object."""
+    def __init__(self, parent, name, lines, rect):
+        super().__init__(parent, name, rect)
+
+        x, y = 10, 50
+        for line in lines.splitlines():
+            Text(self, line, pos=(x, y), movable=False, outlined=False)
+            y += 30
 
     def draw(self, img, pos=(0, 0)):
         """Draw window."""
