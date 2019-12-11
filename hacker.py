@@ -236,7 +236,23 @@ class Rectangle(Node):
             child.draw(self.rect.topleft)
 
 class Window(Node):
-    """Create a window object."""
+    """create a window object"""
+    def __init__(self, parent, image):
+        super().__init__(parent)
+
+        self.frame = pygame.image.load(image)
+        self.rect = self.frame.get_rect()
+        self.outlined = False
+
+    def draw(self, pos=(0, 0)):
+        """draw window object"""
+        super().draw(pos)
+        App.screen.blit(self.frame,)
+        
+
+
+class terminal(Window):
+    """Create a terminal object."""
     def __init__(self, parent, image):
         super().__init__(parent, rect)
 
