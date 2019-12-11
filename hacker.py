@@ -3,7 +3,6 @@ from pygame.locals import *
 import os
 import pickle
 import time
-import terminal
 
 BLACK = (0, 0, 0)
 GRAY = (127, 127, 127)
@@ -15,10 +14,6 @@ DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
 
 
-text = '''This is a
-multi-line
-text file.
-'''
 
 class App:
     """Create the application."""
@@ -471,7 +466,7 @@ class Window(Node):
             self.display_print(line, False)
             print(line)
         self.simulate()
-        
+
     def history_up(self):
         if len(self.display) == 5 and len(self.prev_display) != 0:
             x = self.prev_display.pop(-1)
