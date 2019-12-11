@@ -471,6 +471,7 @@ class Window(Node):
             self.display_print(line, False)
             print(line)
         self.simulate()
+        
     def history_up(self):
         if len(self.display) == 5 and len(self.prev_display) != 0:
             x = self.prev_display.pop(-1)
