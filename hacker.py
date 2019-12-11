@@ -43,6 +43,8 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
         
+        Terminal(self,'windows/terminal.png',(20,20))
+
     def run(self):
         """Run the main event loop."""
         App.running = True
@@ -237,26 +239,29 @@ class Rectangle(Node):
 
 class Window(Node):
     """create a window object"""
-    def __init__(self, parent, image):
+    def __init__(self, parent, image, pos = (30, 30)):
         super().__init__(parent)
 
         self.frame = pygame.image.load(image)
         self.rect = self.frame.get_rect()
+        self.rect.topleft = pos
         self.outlined = False
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
         super().draw(pos)
-        App.screen.blit(self.frame,)
-        
+        App.screen.blit(self.frame,self.rect.move(pos).move(0, 40))
+        for child in self.children:
+            child.draw(self.rect.topleft)
 
 
-class terminal(Window):
+class Terminal(Window):
     """Create a terminal object."""
-    def __init__(self, parent, image):
-        super().__init__(parent, rect)
 
-        self.img = pygme.image.load(image)
+    def __init__(self, parent, image, pos, level='level1'):
+        super().__init__(parent, image, pos)
+
+        self.img = pygame.image.load(image)
         self.outlined = False
 
         self.root = os.getcwd()
@@ -264,7 +269,7 @@ class terminal(Window):
         self.cwd_level = 0 # +1 for every further directories
         self.subdirs = None #avaible child directories
         self.lsfiles = None #avaible files
-        self.game_lvl = folder #curent level
+        self.game_lvl = level #curent level
         self.deletable_files = ['file1.txt']
         self.deleted_files = []
         self.display = []
@@ -285,8 +290,8 @@ class terminal(Window):
         self.answers = {'level1':'the password is "pswrd"', 'level2': 'this is another answer'}
         self.devices = {'172.685': ('pswrd', 'level2')}
 
-        os.chdir(folder)
-        print(f'Terminal starting folder <{folder}>')
+        os.chdir(level)
+        print(f'Terminal starting folder <{level}>')
         self.init_dir()  
 
     def draw(self, pos=(0, 0)):
