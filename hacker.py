@@ -42,9 +42,9 @@ class App:
         #App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
-        
-        Terminal(self,'windows2/terminal_win.png',(20,20))
+
         Inbox(self, 'windows2/inbox_win.png', (40,40),'button/shutdown.png')
+        Terminal(self,'windows2/terminal_win.png',(20,20))
 
     def run(self):
         """Run the main event loop."""
@@ -507,11 +507,11 @@ class Inbox(Window):
     def __init__(self, parent, image, pos, *mails_img):
         super().__init__(parent, image, pos)
 
-        self.emails = mails
-        for mail in mails:
+        self.emails = mails_img
+        for mail in self.emails:
             Button(self, mail, (10,10))
 
-    def draw(self, pos=(20,20)):
+    def draw(self, pos=(0, 0)):
         """draw inbox object"""
         super().draw(pos)
         for child in self.children:
