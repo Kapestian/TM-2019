@@ -39,11 +39,12 @@ class App:
         #icon2.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
         decryptor_icon.movable = False
-        App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
+        #App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
         
-        Terminal(self,'windows/terminal.png',(20,20))
+        Terminal(self,'windows2/terminal_win.png',(20,20))
+        Inbox(self, 'windows2/inbox_win.png', (40,40),'button/shutdown.png')
 
     def run(self):
         """Run the main event loop."""
@@ -250,7 +251,7 @@ class Window(Node):
     def draw(self, pos=(0, 0)):
         """draw window object"""
         super().draw(pos)
-        App.screen.blit(self.frame,self.rect.move(pos).move(0, 40))
+        App.screen.blit(self.frame,self.rect.move(pos))
         for child in self.children:
             child.draw(self.rect.topleft)
 
@@ -261,7 +262,6 @@ class Terminal(Window):
     def __init__(self, parent, image, pos, level='level1'):
         super().__init__(parent, image, pos)
 
-        self.img = pygame.image.load(image)
         self.outlined = False
 
         self.root = os.getcwd()
@@ -500,6 +500,22 @@ class Terminal(Window):
             y = self.next_display.pop(0)
             self.prev_display.append(x)
             self.display.append(y)
+   
+class Inbox(Window):
+    """Create a mail app object"""
+
+    def __init__(self, parent, image, pos, *mails_img):
+        super().__init__(parent, image, pos)
+
+        self.emails = mails
+        for mail in mails:
+            Button(self, mail, (10,10))
+
+    def draw(self, pos=(20,20)):
+        """draw inbox object"""
+        super().draw(pos)
+        for child in self.children:
+            child.draw(self.rect.topleft)
 
 if __name__ == '__main__':
     App().run()
