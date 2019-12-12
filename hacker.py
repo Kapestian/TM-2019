@@ -298,7 +298,6 @@ class Terminal(Window):
         """Draw window with title bar."""
         super().draw(pos)
 
-        App.screen.blit(self.img,(90, 90))
         for child in self.children:
             child.draw(self.rect.topleft)
     
