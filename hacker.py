@@ -28,6 +28,7 @@ class App:
         self.children = []
         self.flags = FULLSCREEN
         self.t0 = time.time()
+        self.main_directory = os.getcwd()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
 
@@ -43,7 +44,7 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        Inbox(self, 'windows2/inbox_win.png', (40,40), False, 'button/shutdown.png')
+        Inbox(self, 'windows2/inbox_win.png', (40,40), True, 'button/shutdown.png')
         Terminal(self,'windows2/terminal_win.png',(20,20), False)
 
     def run(self):
@@ -248,6 +249,8 @@ class Window(Node):
         self.rect.topleft = pos
         self.outlined = False
         #self.active = active
+
+        Button(self, (os.getcwd() + '/button/close.png'), (50, 50))
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
