@@ -33,12 +33,9 @@ class App:
 
         x, y = 20, 20
         dy = 120
-
-        inbox = Inbox(self, 'windows2/inbox_win.png', (40,40), False, 'button/shutdown.png')
-
         terminal_icon = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
         terminal_icon.movable = False
-        email_button = Button(self, 'icons2/email.png', pos=(x, y), cmd='inbox.active = True'); y += dy
+        email_button = Button(self, 'icons2/email.png', pos=(x, y), cmd='App.email_win.visible = not App.email_win.visible'); y += dy
         #icon2.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
         decryptor_icon.movable = False
@@ -46,7 +43,8 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        Terminal(self,'windows2/terminal_win.png',(20,20), False)
+        Inbox(self, 'windows2/inbox_win.png', (40,40),'button/shutdown.png')
+        Terminal(self,'windows2/terminal_win.png',(20,20))
 
     def run(self):
         """Run the main event loop."""
@@ -242,14 +240,13 @@ class Rectangle(Node):
 
 class Window(Node):
     """create a window object"""
-    def __init__(self, parent, image, pos = (30, 30)): #, active=False
+    def __init__(self, parent, image, pos = (30, 30)):
         super().__init__(parent)
 
         self.frame = pygame.image.load(image)
         self.rect = self.frame.get_rect()
         self.rect.topleft = pos
         self.outlined = False
-        #self.active = active
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
@@ -262,11 +259,10 @@ class Window(Node):
 class Terminal(Window):
     """Create a terminal object."""
 
-    def __init__(self, parent, image, pos, active, level='level1'):
+    def __init__(self, parent, image, pos, level='level1'):
         super().__init__(parent, image, pos)
 
         self.outlined = False
-        self.active = active
 
         self.root = os.getcwd()
         self.cwd = '' #curent working directory
@@ -299,11 +295,11 @@ class Terminal(Window):
         self.init_dir()  
 
     def draw(self, pos=(0, 0)):
-        """Draw terminal object"""
-        if self.active:
-            super().draw(pos)
-            for child in self.children:
-                child.draw(self.rect.topleft)
+        """Draw window with title bar."""
+        super().draw(pos)
+
+        for child in self.children:
+            child.draw(self.rect.topleft)
     
     def init_dir(self):
         dir_data = []
@@ -508,20 +504,18 @@ class Terminal(Window):
 class Inbox(Window):
     """Create a mail app object"""
 
-    def __init__(self, parent, image, pos, active, *mails_img):
+    def __init__(self, parent, image, pos, *mails_img):
         super().__init__(parent, image, pos)
 
-        self.active = False
         self.emails = mails_img
         for mail in self.emails:
-            Button(self, mail, (15, 40))
+            Button(self, mail, (10,10))
 
     def draw(self, pos=(0, 0)):
         """draw inbox object"""
-        if self.active:
-            super().draw(pos)
-            for child in self.children:
-                child.draw(self.rect.topleft)
+        super().draw(pos)
+        for child in self.children:
+            child.draw(self.rect.topleft)
 
 if __name__ == '__main__':
     App().run()
