@@ -28,7 +28,6 @@ class App:
         self.children = []
         self.flags = FULLSCREEN
         self.t0 = time.time()
-        self.main_directory = os.getcwd()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
 
@@ -241,16 +240,13 @@ class Rectangle(Node):
 
 class Window(Node):
     """create a window object"""
-    def __init__(self, parent, image, pos = (30, 30)): #, active=False
+    def __init__(self, parent, image, pos = (30, 30)):
         super().__init__(parent)
 
         self.frame = pygame.image.load(image)
         self.rect = self.frame.get_rect()
         self.rect.topleft = pos
         self.outlined = False
-        #self.active = active
-
-        Button(self, (os.getcwd() + '/button/close.png'), (50, 50))
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
