@@ -512,7 +512,7 @@ class Inbox(Window):
         self.active = active
         self.emails = mails_img
         for mail in self.emails:
-            Button(self, mail, (15, 40))
+            Button(self, mail, (15, 40)) #juste un test de bouton
 
     def draw(self, pos=(0, 0)):
         """draw inbox object"""
