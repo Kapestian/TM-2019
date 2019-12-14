@@ -45,13 +45,12 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        #Inbox(self, 'windows2/inbox_win.png', (40,40), 'button/shutdown.png')
-        terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
-        File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
+        Inbox(self, 'windows2/inbox_win.png', (40,40), 'user_mail/mail1.png')
+        #Terminal(self,'windows2/terminal_win.png',(20,20))
+        #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
+        
         #debug
-        terminal.change_dir('folder1')
-        terminal.previous_dir()
-        print(terminal.display)
+
 
     def run(self):
         """Run the main event loop."""
