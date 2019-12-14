@@ -47,7 +47,7 @@ class App:
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), 'button/shutdown.png')
         terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
-        File(self, 'txtfile', 'test.txt', 'salut à tous')
+        File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         #debug
         terminal.change_dir('folder1')
         terminal.previous_dir()
@@ -187,8 +187,8 @@ class File(Node):
         self.name = name
         self.file_type = ftype
         if self.file_type == 'pngfile':
-            self.content = pygame.image.load(root_folder+name)
-            self.rect = self.image.get_rect()
+            self.content = pygame.image.load(root_folder+content)
+            self.rect = self.content.get_rect()
         else:
             self.content = content 
             self.rect = rect 
@@ -198,10 +198,16 @@ class File(Node):
         """draw file object"""
         super().draw(pos)
         pygame.draw.rect(App.screen, LIGHTGRAY, self.rect,0)
-        pygame.draw.rect(App.screen, BLUE, (*self.rect.topleft, self.rect.width, 30))
-        pygame.draw.rect(App.screen, LIGHTGRAY, self.rect, 3)
+        pygame.draw.rect(App.screen, BLUE, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, 30))
+        pygame.draw.rect(App.screen, LIGHTGRAY, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, self.rect.height+30), 3)
+        pygame.draw.rect(App.screen, WHITE, (self.rect.topleft[0]+3, self.rect.topleft[1]+3, self.rect.width-6, self.rect.height-6))
+        
+        if self.file_type == 'pngfile':
+            App.screen.blit(self.content, self.rect.topleft)
+        
+        
 
-        Text(self, self.name, (5,7),LIGHTGRAY, 20, outlined=False, editable=False)
+        Text(self, self.name, (10,-22),LIGHTGRAY, 18, outlined=False, editable=False)
 
         for child in self.children:
             child.draw(self.rect.topleft)
