@@ -13,8 +13,6 @@ DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
 
-
-
 class App:
     """Create the application."""
     screen = None
@@ -44,7 +42,7 @@ class App:
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
         Inbox(self, 'windows2/inbox_win.png', (40,40), True, 'button/shutdown.png')
-        Terminal(self,'windows2/terminal_win.png',(20,20), False)
+        terminal = Terminal(self,'windows2/terminal_win.png',(20,20), False)
 
     def run(self):
         """Run the main event loop."""
