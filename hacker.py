@@ -45,7 +45,7 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        Inbox(self, 'windows2/inbox_win.png', (40,40), 'user_mail/mail1.png')
+        Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
         #Terminal(self,'windows2/terminal_win.png',(20,20))
         #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
@@ -183,6 +183,8 @@ class File(Node):
     def __init__(self, parent, ftype, name, content, rect=Rect(100, 100, 600, 400), pos=(90,90)):
         super().__init__(parent, pos)
         
+        self.outlined = False
+        self.movable = True
         self.name = name
         self.file_type = ftype
         if self.file_type == 'pngfile':
@@ -545,12 +547,15 @@ class Terminal(Window):
 class Inbox(Window):
     """Create a mail app object"""
 
-    def __init__(self, parent, image, pos, *mails_img):
+    def __init__(self, parent, image, pos, *mails):
         super().__init__(parent, image, pos)
 
-        self.emails = mails_img
+        self.emails = mails
+        for i,j in mails:
+            self.img = i
+            self.cmd = j
         for mail in self.emails:
-            Button(self, mail, (15, 40)) #juste un test de bouton
+            Button(self, self.img, (15, 100), self.cmd) #juste un test de bouton
 
     def draw(self, pos=(0, 0)):
         """draw inbox object"""
