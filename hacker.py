@@ -51,6 +51,7 @@ class App:
         #debug
         terminal.change_dir('folder1')
         terminal.previous_dir()
+        print(terminal.display)
 
     def run(self):
         """Run the main event loop."""
@@ -304,6 +305,7 @@ class Terminal(Window):
         self.display = []
         self.prev_display = []
         self.next_display = []
+        self.font = pygame.font.SysFont('consolas', 24)
         self.helpcmd =[
             'ls\t Display a list of a directory\'s files and subdirectories',
             'cd\t Change the current directory (ex: cd folder)',
@@ -404,15 +406,11 @@ class Terminal(Window):
                 self.display.append(self.cwd + ' ')
                 self.prev_display.append(stored)
         dy = 50
-        n = 1
         for line in self.display:
-            if n == len(self.display):
-                Text(self, line, (10,dy), GREEN, editable=True, movable=False, outlined=False)
-            else:
-                Text(self, line, (10,dy), LIGHTBLUE, editable=False, movable=False,outlined=False)
-            dy+=40
-            n+=1     
-           
+            imgtxt = self.font.render(line, True, GREEN)
+            App.screen.blit(imgtxt, (20,dy))
+            dy += 50
+        pygame.display.update()
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
             self.cwd_level += 1
