@@ -45,7 +45,7 @@ class App:
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), 'button/shutdown.png')
-        Terminal(self,'windows2/terminal_win.png',(20,20))
+        terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
 
     def run(self):
         """Run the main event loop."""
@@ -168,7 +168,7 @@ class Text(Node):
             if event.key == K_BACKSPACE:
                 self.text = self.text[:-1]
             elif event.key == K_KP_ENTER:
-                self.execute_cmd()
+                terminal.execute_cmd('main ls')
             elif event.key == K_TAB:
                 print('Tab')
             else:
@@ -270,7 +270,7 @@ class Terminal(Window):
         self.subdirs = None #avaible child directories
         self.lsfiles = None #avaible files
         self.game_lvl = level #curent level
-        self.deletable_files = ['file1.txt']
+        self.deletable_files = []
         self.deleted_files = []
         self.display = []
         self.prev_display = []
@@ -292,7 +292,7 @@ class Terminal(Window):
 
         os.chdir(level)
         print(f'Terminal starting folder <{level}>')
-        self.init_dir()  
+        self.init_dir()
 
     def draw(self, pos=(0, 0)):
         """Draw terminal object"""
@@ -324,7 +324,8 @@ class Terminal(Window):
     def execute_cmd(self, cmd_str): 
         ''' read à terminal line (path:\> action argument) and execute an action'''
 
-        cmd_lst = cmd_str.split(' ')
+        cmd_w_path = cmd_str[:self.cwd] #format the chaine without the path name
+        cmd_lst = cmd_w_path.split(' ')
         action = cmd_lst[0]
         try:
             arg = cmd_lst[1]
@@ -379,9 +380,9 @@ class Terminal(Window):
             n = 1
             l = len(self.display)
             if n == l-1:
-                Text(self,line, (20,dy), GREEN, editable=True, movable=False, outlined=False)
+                Text(self, line, (20,dy), GREEN, editable=True, movable=False, outlined=False)
             else:
-                Text(self,line, (20,dy), GREEN, editable=False, movable=False,outlined=False)
+                Text(self, line, (20,dy), GREEN, editable=False, movable=False,outlined=False)
             dy+=1
             n+=1
                 
@@ -459,8 +460,7 @@ class Terminal(Window):
         if target in self.devices.keys():
             if self.devices[target][0] == password:
                 os.chdir(self.root)
-                terminal2 = Terminal(self.devices[target][1])
-                terminal2.simulate()
+                terminal = Terminal(self.devices[target][1])
             else:
                 self.display_print('wrong password')
                 print('wrong password')
@@ -530,3 +530,4 @@ class Inbox(Window):
 
 if __name__ == '__main__':
     App().run()
+    terminal.execute_cmd('mainls')
