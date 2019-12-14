@@ -8,13 +8,14 @@ BLACK = (0, 0, 0)
 GRAY = (127, 127, 127)
 WHITE = (255, 255, 255)
 GREEN = (0,255, 0)
+BLUE = (0, 0, 234)
 LIGHTBLUE = (58, 110, 165)
 LIGHTGRAY = (212,208,200)
 DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
 
-root_folder = os.getcwd()
+root_folder = os.getcwd()+'/'
 
 class App:
     """Create the application."""
@@ -46,6 +47,7 @@ class App:
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), 'button/shutdown.png')
         terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
+        File(self, 'txtfile', 'test.txt', 'salut à tous')
         #debug
         terminal.change_dir('folder1')
         terminal.previous_dir()
@@ -143,12 +145,12 @@ class Node:
 
 class Text(Node):
     """Create an editable text object."""
-    def __init__(self, parent, text, pos=(0, 0), fontcolor=BLACK, **options):
+    def __init__(self, parent, text, pos=(0, 0), fontcolor=BLACK, fontsize=24, **options):
         super().__init__(parent, pos)
         self.text = text
         self.pos = pos
         self.fontcolor = fontcolor
-        self.fontsize = 24
+        self.fontsize = fontsize
         self.editable = True
         self.render()
         self.__dict__.update(options)
@@ -168,31 +170,40 @@ class Text(Node):
     def do_event(self, event):
         super().do_event(event)
         if event.type == KEYDOWN:
-            if event.key == K_BACKSPACE:
+            if event.key == K_BACKSPACE and self.editable:
                 self.text = self.text[:-1]
             elif event.key == K_KP_ENTER:
                 terminal.execute_cmd('main ls')
-            elif event.key == K_TAB:
-                print('Tab')
-            else:
+            elif self.editable:
                 self.text += event.unicode
+            
             self.render()
 
 class File(Node):
-    def __init__(self, parent, ftype, file, pos=(90,90)):
-        super.__init__(parent, pos)
+    def __init__(self, parent, ftype, name, content, rect=Rect(100, 100, 600, 400), pos=(90,90)):
+        super().__init__(parent, pos)
         
-        self.file = file
+        self.name = name
         self.file_type = ftype
-        self.pos = pos
-        try:
-            self.img = pygame.image.load(root_folder+'/'+file)
-            self.rect = self.rect.get_rect()
-            self.rect.topleft = pos
+        if self.file_type == 'pngfile':
+            self.content = pygame.image.load(root_folder+name)
+            self.rect = self.image.get_rect()
+        else:
+            self.content = content 
+            self.rect = rect 
+        self.rect.topleft = pos
 
-    def draw(self,pos=(70,70))
+    def draw(self, pos=(70,70)):
         """draw file object"""
+        super().draw(pos)
+        pygame.draw.rect(App.screen, LIGHTGRAY, self.rect,0)
+        pygame.draw.rect(App.screen, BLUE, (*self.rect.topleft, self.rect.width, 30))
+        pygame.draw.rect(App.screen, LIGHTGRAY, self.rect, 3)
 
+        Text(self, self.name, (5,7),LIGHTGRAY, 20, outlined=False, editable=False)
+
+        for child in self.children:
+            child.draw(self.rect.topleft)
 
 class Icon(Node):
     def __init__(self, parent, file, pos=(100, 100)):
@@ -262,7 +273,7 @@ class Window(Node):
     def __init__(self, parent, image, pos = (30, 30)):
         super().__init__(parent)
 
-        self.frame = pygame.image.load(root_folder+'/'+image)
+        self.frame = pygame.image.load(root_folder+image)
         self.rect = self.frame.get_rect()
         self.rect.topleft = pos
         self.right_corner = self.rect
@@ -282,7 +293,6 @@ class Terminal(Window):
     def __init__(self, parent, image, pos, level='level1'):
         super().__init__(parent, image, pos)
 
-        self.outlined = False
         self.root_folder = os.getcwd()
         self.cwd = '' #curent working directory
         self.cwd_level = 0 # +1 for every further directories
@@ -396,7 +406,6 @@ class Terminal(Window):
         dy = 50
         n = 1
         for line in self.display:
-
             if n == len(self.display):
                 Text(self, line, (10,dy), GREEN, editable=True, movable=False, outlined=False)
             else:
