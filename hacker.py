@@ -7,11 +7,14 @@ import time
 BLACK = (0, 0, 0)
 GRAY = (127, 127, 127)
 WHITE = (255, 255, 255)
+GREEN = (0,255, 0)
 LIGHTBLUE = (58, 110, 165)
 LIGHTGRAY = (212,208,200)
 DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
+
+Root = os.getcwd()
 
 class App:
     """Create the application."""
@@ -33,16 +36,16 @@ class App:
         dy = 120
         terminal_icon = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
         terminal_icon.movable = False
-        email_button = Button(self, 'icons2/email.png', pos=(x, y), cmd='Inbox.active = True'); y += dy
-        #icon2.movable = False
+        email_icon = Icon(self, 'icons2/email.png', pos=(x, y)); y += dy
+        email_icon.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
         decryptor_icon.movable = False
         #App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        Inbox(self, 'windows2/inbox_win.png', (40,40), True, 'button/shutdown.png')
-        terminal = Terminal(self,'windows2/terminal_win.png',(20,20), False)
+        #Inbox(self, 'windows2/inbox_win.png', (40,40), 'button/shutdown.png')
+        Terminal(self,'windows2/terminal_win.png',(20,20))
 
     def run(self):
         """Run the main event loop."""
@@ -95,8 +98,8 @@ class Node:
                 pygame.draw.rect(App.screen, self.color, self.rect.move(*pos), 1)
             for child in self.children:
                 child.draw(self.rect.topleft)
-        if self is App.selected:
-            pygame.draw.rect(App.screen, Node.sel_color, self.rect.move(*pos), 3)
+        #if self is App.selected:
+            #pygame.draw.rect(App.screen, Node.sel_color, self.rect.move(*pos), 3)
 
     def do_event(self, event):
         """Handle mouse clicks and key press events."""
@@ -126,7 +129,7 @@ class Node:
 
         if self is App.selected:
             if event.type == MOUSEMOTION and event.buttons[0] == 1 and self.movable:
-                self.rect.move_ip(event.rel)
+               self.rect.move_ip(event.rel)
 
     def double_click(self):
         print('double-click in', self)
@@ -142,14 +145,14 @@ class Text(Node):
         self.text = text
         self.pos = pos
         self.fontcolor = fontcolor
-        self.fontsize = 36
+        self.fontsize = 24
         self.editable = True
         self.render()
         self.__dict__.update(options)
 
     def render(self):
         """Create a surface image of the text."""
-        self.font = pygame.font.Font(None, self.fontsize)
+        self.font = pygame.font.SysFont('consolas', self.fontsize)
         self.img = self.font.render(self.text, True, self.fontcolor)
         self.rect = self.img.get_rect()
         self.rect.topleft = self.pos
@@ -161,11 +164,11 @@ class Text(Node):
 
     def do_event(self, event):
         super().do_event(event)
-        if self is App.selected and event.type == KEYDOWN:
+        if event.type == KEYDOWN:
             if event.key == K_BACKSPACE:
                 self.text = self.text[:-1]
-            elif event.key == K_RETURN:
-                print('Return')
+            elif event.key == K_KP_ENTER:
+                self.execute_cmd()
             elif event.key == K_TAB:
                 print('Tab')
             else:
@@ -213,7 +216,7 @@ class Button(Node):
 
             if self.abs_rect.collidepoint(event.pos) and self.selectable:
 
-                App.selected = self
+                App.selected = None
                 self.click_pos = event.pos
                 exec(self.cmd)
 
@@ -257,12 +260,10 @@ class Window(Node):
 class Terminal(Window):
     """Create a terminal object."""
 
-    def __init__(self, parent, image, pos, active, level='level1'):
+    def __init__(self, parent, image, pos, level='level1'):
         super().__init__(parent, image, pos)
 
         self.outlined = False
-        self.active = active
-
         self.root = os.getcwd()
         self.cwd = '' #curent working directory
         self.cwd_level = 0 # +1 for every further directories
@@ -295,10 +296,9 @@ class Terminal(Window):
 
     def draw(self, pos=(0, 0)):
         """Draw terminal object"""
-        if self.active:
-            super().draw(pos)
-            for child in self.children:
-                child.draw(self.rect.topleft)
+        super().draw(pos)
+        for child in self.children:
+            child.draw(self.rect.topleft)
     
     def init_dir(self):
         dir_data = []
@@ -359,6 +359,7 @@ class Terminal(Window):
             print('unable to execute this command')
 
     def display_print(self, text='', newline=True):
+
         if len(self.display) < 5: #not full window
             self.display.append(text)
             if newline:
@@ -372,7 +373,18 @@ class Terminal(Window):
                 stored = self.display.pop(0)
                 self.display.append(self.cwd + ' ')
                 self.prev_display.append(stored)
-    
+        
+        for line in self.display:
+            dy = 50
+            n = 1
+            l = len(self.display)
+            if n == l-1:
+                Text(self,line, (20,dy), GREEN, editable=True, movable=False, outlined=False)
+            else:
+                Text(self,line, (20,dy), GREEN, editable=False, movable=False,outlined=False)
+            dy+=1
+            n+=1
+                
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
             self.cwd_level += 1
@@ -503,20 +515,18 @@ class Terminal(Window):
 class Inbox(Window):
     """Create a mail app object"""
 
-    def __init__(self, parent, image, pos, active, *mails_img):
+    def __init__(self, parent, image, pos, *mails_img):
         super().__init__(parent, image, pos)
 
-        self.active = active
         self.emails = mails_img
         for mail in self.emails:
             Button(self, mail, (15, 40)) #juste un test de bouton
 
     def draw(self, pos=(0, 0)):
         """draw inbox object"""
-        if self.active:
-            super().draw(pos)
-            for child in self.children:
-                child.draw(self.rect.topleft)
+        super().draw(pos)
+        for child in self.children:
+            child.draw(self.rect.topleft)
 
 if __name__ == '__main__':
     App().run()
