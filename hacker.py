@@ -14,7 +14,7 @@ DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
 
-Root = os.getcwd()
+root_folder = os.getcwd()
 
 class App:
     """Create the application."""
@@ -46,6 +46,9 @@ class App:
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), 'button/shutdown.png')
         terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
+        #debug
+        terminal.change_dir('folder1')
+        terminal.previous_dir()
 
     def run(self):
         """Run the main event loop."""
@@ -175,6 +178,21 @@ class Text(Node):
                 self.text += event.unicode
             self.render()
 
+class File(Node):
+    def __init__(self, parent, ftype, file, pos=(90,90)):
+        super.__init__(parent, pos)
+        
+        self.file = file
+        self.file_type = ftype
+        self.pos = pos
+        try:
+            self.img = pygame.image.load(root_folder+'/'+file)
+            self.rect = self.rect.get_rect()
+            self.rect.topleft = pos
+
+    def draw(self,pos=(70,70))
+        """draw file object"""
+
 
 class Icon(Node):
     def __init__(self, parent, file, pos=(100, 100)):
@@ -244,9 +262,10 @@ class Window(Node):
     def __init__(self, parent, image, pos = (30, 30)):
         super().__init__(parent)
 
-        self.frame = pygame.image.load(image)
+        self.frame = pygame.image.load(root_folder+'/'+image)
         self.rect = self.frame.get_rect()
         self.rect.topleft = pos
+        self.right_corner = self.rect
         self.outlined = False
 
     def draw(self, pos=(0, 0)):
@@ -264,7 +283,7 @@ class Terminal(Window):
         super().__init__(parent, image, pos)
 
         self.outlined = False
-        self.root = os.getcwd()
+        self.root_folder = os.getcwd()
         self.cwd = '' #curent working directory
         self.cwd_level = 0 # +1 for every further directories
         self.subdirs = None #avaible child directories
@@ -374,18 +393,17 @@ class Terminal(Window):
                 stored = self.display.pop(0)
                 self.display.append(self.cwd + ' ')
                 self.prev_display.append(stored)
-        
+        dy = 50
+        n = 1
         for line in self.display:
-            dy = 50
-            n = 1
-            l = len(self.display)
-            if n == l-1:
-                Text(self, line, (20,dy), GREEN, editable=True, movable=False, outlined=False)
+
+            if n == len(self.display):
+                Text(self, line, (10,dy), GREEN, editable=True, movable=False, outlined=False)
             else:
-                Text(self, line, (20,dy), GREEN, editable=False, movable=False,outlined=False)
-            dy+=1
-            n+=1
-                
+                Text(self, line, (10,dy), LIGHTBLUE, editable=False, movable=False,outlined=False)
+            dy+=40
+            n+=1     
+           
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
             self.cwd_level += 1
@@ -459,7 +477,7 @@ class Terminal(Window):
     def access(self, target,password):
         if target in self.devices.keys():
             if self.devices[target][0] == password:
-                os.chdir(self.root)
+                os.chdir(self.root_folder)
                 terminal = Terminal(self.devices[target][1])
             else:
                 self.display_print('wrong password')
@@ -530,4 +548,3 @@ class Inbox(Window):
 
 if __name__ == '__main__':
     App().run()
-    terminal.execute_cmd('mainls')
