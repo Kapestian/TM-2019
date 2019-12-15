@@ -50,10 +50,14 @@ class App:
         #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
         #debug
+
+        terminal.draw_display()
         terminal.change_dir('folder1')
+        terminal.draw_display()
         terminal.previous_dir()
-        terminal.list_files()
-        print(terminal.display)
+        terminal.draw_display()
+        #terminal.list_files()
+        #terminal.draw_display()
 
     def run(self):
         """Run the main event loop."""
@@ -306,7 +310,7 @@ class Terminal(Window):
         self.display_obj = []
         self.prev_display = []
         self.next_display = []
-        #self.font = pygame.font.SysFont('consolas', 24)
+        self.dx = 10
         self.helpcmd =[
             'ls\t Display a list of a directory\'s files and subdirectories',
             'cd\t Change the current directory (ex: cd folder)',
@@ -398,7 +402,7 @@ class Terminal(Window):
 
     def display_print(self, text='', newline=True):
 
-        if len(self.display) < 5: #not full window
+        if len(self.display) < 10: #not full window
             self.display.append(text)
             if newline:
                 self.display.append(self.cwd)
@@ -411,13 +415,19 @@ class Terminal(Window):
                 stored = self.display.pop(0)
                 self.display.append(self.cwd + ' ')
                 self.prev_display.append(stored)
+        
+
+    def draw_display(self):
         dy = 50
+        n=1
         for child in self.children:
-            del(child)
+            if n!=1:
+                self.children.remove(child)
+            n+=1
         for line in self.display:
-            Text(self,line,(10,dy),GREEN, outlined=False)
+            Text(self,line,(self.dx,dy),GREEN, outlined=False)
             dy += 40
-        pygame.display.update()
+        self.dx += 125
 
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
@@ -440,19 +450,19 @@ class Terminal(Window):
     def list_files(self): #blit chaque ligne
         if self.lsfiles != None:
             for directory in self.subdirs:
-                dir_str = '<dir>\t{}'.format(directory)
-                self.display_print(dir_str)
+                dir_str = '<dir>   {}'.format(directory)
+                self.display_print(dir_str, False)
                 print('<dir>', directory, sep='\t')
 
             for file in self.lsfiles:
                 if file not in self.deleted_files:
-                    file_str = '<file>\t{}'.format(file)
-                    self.display_print(file_str)
+                    file_str = '<file>  {}'.format(file)
+                    self.display_print(file_str, False)
                     print('<file>', file, sep='\t')
-
         else:
             self.display_print('This folder is empty')
             print('This folder is empty')
+        self.display_print(self.cwd, False)
 
     def open_file(self, file):
         elt_file = file.split('.')
@@ -532,14 +542,14 @@ class Terminal(Window):
         self.simulate()
 
     def history_up(self):
-        if len(self.display) == 5 and len(self.prev_display) != 0:
+        if len(self.display) == 10 and len(self.prev_display) != 0:
             x = self.prev_display.pop(-1)
             y = self.display.pop(-1)
             self.display.insert(0,x)
             self.next_display.insert(0,y)
 
     def history_down(self):
-        if len(display) == 5 and len(next_display) != 0:
+        if len(display) == 10 and len(next_display) != 0:
             x = self.display.pop(0)
             y = self.next_display.pop(0)
             self.prev_display.append(x)
