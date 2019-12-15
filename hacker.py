@@ -298,7 +298,7 @@ class Terminal(Window):
         self.subdirs = None #avaible child directories
         self.lsfiles = None #avaible files
         self.game_lvl = level #curent level
-        self.deletable_files = []
+        self.deletable_files = ['file1.txt']
         self.deleted_files = []
         self.display = []
         self.display_obj = []
@@ -520,6 +520,7 @@ class Terminal(Window):
         if file in self.lsfiles:
             if file in self.deletable_files:
                 self.deleted_files.append(file)
+                self.display_print('file deleted')
             else:
                 self.display_print('unable to delete this file')
                 print('unable to delete this file')
