@@ -53,7 +53,8 @@ class App:
         terminal.change_dir('folder1')
         terminal.previous_dir()
         terminal.list_files()
-   
+        print(terminal.display)
+
     def run(self):
         """Run the main event loop."""
         App.running = True
@@ -411,9 +412,11 @@ class Terminal(Window):
                 self.display.append(self.cwd + ' ')
                 self.prev_display.append(stored)
         dy = 50
-        self.display.obj = []
+        for child in self.children:
+            del(child)
         for line in self.display:
-            pass #gh ok
+            Text(self,line,(10,dy),GREEN, outlined=False)
+            dy += 40
         pygame.display.update()
 
     def change_dir(self, newdir): #ajouter ligne curdir
