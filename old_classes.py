@@ -30,3 +30,39 @@ class TextFile(Window):
         
         for child in self.children:
             child.draw(self.rect.topleft)
+
+class Text(Node):
+    """Create an editable text object."""
+    def __init__(self, parent, text, pos=(0, 0), fontcolor=BLACK, fontsize=24, **options):
+        super().__init__(parent, pos)
+        self.text = text
+        self.pos = pos
+        self.fontcolor = fontcolor
+        self.fontsize = fontsize
+        self.editable = True
+        self.render()
+        self.__dict__.update(options)
+
+    def render(self):
+        """Create a surface image of the text."""
+        self.font = pygame.font.SysFont('consolas', self.fontsize)
+        self.img = self.font.render(self.text, True, self.fontcolor)
+        self.rect = self.img.get_rect()
+        self.rect.topleft = self.pos
+
+    def draw(self, pos):
+        """Draw the text object."""
+        super().draw(pos)
+        App.screen.blit(self.img, self.rect.move(pos))
+
+    def do_event(self, event):
+        super().do_event(event)
+        if event.type == KEYDOWN:
+            if event.key == K_BACKSPACE and self.editable:
+                self.text = self.text[:-1]
+            elif event.key == K_KP_ENTER:
+                terminal.execute_cmd('main ls')
+            elif self.editable:
+                self.text += event.unicode
+            
+            self.render()

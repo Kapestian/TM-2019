@@ -413,9 +413,6 @@ class Terminal(Window):
         dy = 50
         self.display.obj = []
         for line in self.display:
-            self.display_obj.append(Text(self, line, (10,dy), GREEN, outlined=False)
-        
-        for obj in self.display.obj:
             pass
         pygame.display.update()
 
