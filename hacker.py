@@ -340,6 +340,7 @@ class Terminal(Window):
         if event.type == KEYDOWN:
             if event.key == K_k:        
                 pass
+
     def init_dir(self):
         dir_data = []
         '''inits the directory datas'''
@@ -414,13 +415,13 @@ class Terminal(Window):
                 stored = self.display.pop(0)
                 self.display.append(self.cwd + ' ')
                 self.prev_display.append(stored)
-        
+        self.draw_display()
 
     def draw_display(self):
         dy = 50
         self.children = self.children[:0]
         for line in self.display:
-            Text(self, line, (10,dy), GREEN, outlined=False)
+            Text(self, line, (10,dy), GREEN, outlined=False, movable=False)
             dy += 35
 
 
