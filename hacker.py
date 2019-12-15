@@ -276,7 +276,7 @@ class Window(Node):
         self.rect.topleft = pos
         self.outlined = False
 
-        Button(self, root_folder+'button/close.png', (self.rect.width-30, 7),'del(self)')
+        Button(self, root_folder+'button/close.png', (self.rect.width-30, 7),'')
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
