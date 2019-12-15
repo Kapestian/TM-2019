@@ -45,7 +45,7 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
+        Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"),('user_mail/mail1.png','App.running = False'))
         #Terminal(self,'windows2/terminal_win.png',(20,20))
         #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
@@ -174,7 +174,7 @@ class Text(Node):
                 self.text = self.text[:-1]
             elif event.key == K_KP_ENTER:
                 terminal.execute_cmd('main ls')
-            elif self.editable:
+            elif :
                 self.text += event.unicode
             
             self.render()
@@ -418,6 +418,7 @@ class Terminal(Window):
             App.screen.blit(imgtxt, (20,dy))
             dy += 50
         pygame.display.update()
+
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
             self.cwd_level += 1
@@ -551,11 +552,12 @@ class Inbox(Window):
         super().__init__(parent, image, pos)
 
         self.emails = mails
-        for i,j in mails:
-            self.img = i
-            self.cmd = j
+        dy = 100
         for mail in self.emails:
-            Button(self, self.img, (15, 100), self.cmd) #juste un test de bouton
+            img = mail[0]
+            cmd = mail[1]
+            Button(self, img, (15, dy), cmd)
+            dy += 70
 
     def draw(self, pos=(0, 0)):
         """draw inbox object"""
