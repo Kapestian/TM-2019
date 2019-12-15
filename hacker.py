@@ -46,12 +46,14 @@ class App:
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
-        Terminal(self,'windows2/terminal_win.png',(20,20))
-        File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
+        terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
+        #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
         #debug
-
-
+        terminal.change_dir('folder1')
+        terminal.previous_dir()
+        terminal.list_files()
+   
     def run(self):
         """Run the main event loop."""
         App.running = True
@@ -151,7 +153,6 @@ class Text(Node):
         self.pos = pos
         self.fontcolor = fontcolor
         self.fontsize = fontsize
-        self.editable = True
         self.render()
         self.__dict__.update(options)
 
@@ -166,18 +167,6 @@ class Text(Node):
         """Draw the text object."""
         super().draw(pos)
         App.screen.blit(self.img, self.rect.move(pos))
-
-    def do_event(self, event):
-        super().do_event(event)
-        if event.type == KEYDOWN:
-            if event.key == K_BACKSPACE and self.editable:
-                self.text = self.text[:-1]
-            elif event.key == K_KP_ENTER:
-                terminal.execute_cmd('main ls')
-            elif self.editable:
-                self.text += event.unicode
-            
-            self.render()
 
 class File(Node):
     def __init__(self, parent, ftype, name, content, rect=Rect(100, 100, 600, 400), pos=(90,90)):
@@ -288,7 +277,7 @@ class Window(Node):
         self.rect.topleft = pos
         self.outlined = False
 
-        Button(self, root_folder+'button/close.png', (self.rect.width-30, 7))
+        Button(self, root_folder+'button/close.png', (self.rect.width-30, 7),'del(self)')
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
@@ -313,9 +302,10 @@ class Terminal(Window):
         self.deletable_files = []
         self.deleted_files = []
         self.display = []
+        self.display_obj = []
         self.prev_display = []
         self.next_display = []
-        self.font = pygame.font.SysFont('consolas', 24)
+        #self.font = pygame.font.SysFont('consolas', 24)
         self.helpcmd =[
             'ls\t Display a list of a directory\'s files and subdirectories',
             'cd\t Change the current directory (ex: cd folder)',
@@ -345,7 +335,7 @@ class Terminal(Window):
         super().do_event(event)
         if event.type == KEYDOWN:
             if event.key == K_k:        
-
+                pass
     def init_dir(self):
         dir_data = []
         '''inits the directory datas'''
@@ -421,10 +411,12 @@ class Terminal(Window):
                 self.display.append(self.cwd + ' ')
                 self.prev_display.append(stored)
         dy = 50
+        self.display.obj = []
         for line in self.display:
-            imgtxt = self.font.render(line, True, GREEN)
-            App.screen.blit(imgtxt, (20,dy))
-            dy += 50
+            self.display_obj.append(Text(self, line, (10,dy), GREEN, outlined=False)
+        
+        for obj in self.display.obj:
+            pass
         pygame.display.update()
 
     def change_dir(self, newdir): #ajouter ligne curdir
