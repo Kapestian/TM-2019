@@ -46,7 +46,7 @@ class App:
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
-        #Terminal(self,'windows2/terminal_win.png',(20,20))
+        Terminal(self,'windows2/terminal_win.png',(20,20))
         File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
         #debug
@@ -341,6 +341,11 @@ class Terminal(Window):
         for child in self.children:
             child.draw(self.rect.topleft)
     
+    def do_event(self, event):
+        super().do_event(event)
+        if event.type == KEYDOWN:
+            if event.key == K_k:        
+
     def init_dir(self):
         dir_data = []
         '''inits the directory datas'''
