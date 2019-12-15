@@ -413,7 +413,7 @@ class Terminal(Window):
         dy = 50
         self.display.obj = []
         for line in self.display:
-            pass #gh problem
+            pass #gh
         pygame.display.update()
 
     def change_dir(self, newdir): #ajouter ligne curdir
