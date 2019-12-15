@@ -50,14 +50,8 @@ class App:
         #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
         #debug
+        terminal.draw_display()
 
-        terminal.draw_display()
-        terminal.change_dir('folder1')
-        terminal.draw_display()
-        terminal.previous_dir()
-        terminal.draw_display()
-        terminal.list_files()
-        terminal.draw_display()
 
     def run(self):
         """Run the main event loop."""
@@ -311,14 +305,14 @@ class Terminal(Window):
         self.prev_display = []
         self.next_display = []
         self.helpcmd =[
-            'ls\t Display a list of a directory\'s files and subdirectories',
-            'cd\t Change the current directory (ex: cd folder)',
-            'cd..\t Go to the parent directory',
-            'open \t Open specified file (ex: open file.txt)' ,
-            'access\t Connect to another device (ex: access device,password)',
-            'del\t Delete specified file (ex: del file.txt)',
-            'clue\t Show level\'s clue' ,
-            'answer\t Show level\'s answer',]
+            'ls        Display a list of a directory\'s files and subdirectories',
+            'cd        Change the current directory (ex: cd folder)',
+            'cd..      Go to the parent directory',
+            'open      Open specified file (ex: open file.txt)' ,
+            'access    Connect to another device (ex: access device,password)',
+            'del       Delete specified file (ex: del file.txt)',
+            'clue      Show level\'s clue' ,
+            'answer    Show level\'s answer',]
 
         # ces données seront "encryptées" avec un pickle
         self.clues = {'level1':'this is a clue', 'level2': 'this is another clue'}
@@ -338,8 +332,20 @@ class Terminal(Window):
     def do_event(self, event):
         super().do_event(event)
         if event.type == KEYDOWN:
-            if event.key == K_k:        
-                self.display.append('caca')
+            if event.key == K_CAPSLOCK:        
+                self.display_print('test', False)
+            elif event.key == K_RETURN:
+                self.execute_cmd(self.display[-1])
+            elif event.key == K_BACKSPACE:
+                if len(self.display[-1]) > len(self.cwd)+1:
+                   self.display[-1] = self.display[-1][:-1]
+            elif event.key == K_UP:
+                self.history_up()
+            elif event.key == K_DOWN:
+                self.history_down()
+            else:
+                self.display[-1] += event.unicode
+        self.draw_display()
 
     def init_dir(self):
         dir_data = []
@@ -353,7 +359,7 @@ class Terminal(Window):
         self.cwd = dir_data[0]
         self.subdirs = dir_data[1]
         self.lsfiles = dir_data[2]
-        self.display_print(self.cwd, False)
+        self.display_print(self.cwd+' ', False)
         print(f'{self.cwd}, sub-directories: {self.subdirs}, sub-files: {self.lsfiles}')
 
     def simulate(self):
@@ -365,7 +371,7 @@ class Terminal(Window):
     def execute_cmd(self, cmd_str): 
         ''' read à terminal line (path:\> action argument) and execute an action'''
 
-        cmd_w_path = cmd_str[:self.cwd] #format the chaine without the path name
+        cmd_w_path = cmd_str[len(self.cwd)+1:] #format the chaine without the path name
         cmd_lst = cmd_w_path.split(' ')
         action = cmd_lst[0]
         try:
@@ -396,16 +402,18 @@ class Terminal(Window):
             self.get_cwd() #debug only
         elif action == 'help':
             self.help_cmd()
+        elif action == 'cls':
+            self.clear_screen()
         else:
             self.display_print('unable to execute this command')
             print('unable to execute this command')
 
     def display_print(self, text='', newline=True):
 
-        if len(self.display) < 10: #not full window
+        if len(self.display) < 15 : #not full window
             self.display.append(text)
             if newline:
-                self.display.append(self.cwd)
+                self.display.append(self.cwd+' ')
 
         else: #full window
             stored = self.display.pop(0)
@@ -413,13 +421,14 @@ class Terminal(Window):
             self.prev_display.append(stored)
             if newline:
                 stored = self.display.pop(0)
-                self.display.append(self.cwd + ' ')
+                self.display.append(self.cwd+' ')
                 self.prev_display.append(stored)
+        
         self.draw_display()
 
     def draw_display(self):
-        dy = 50
-        self.children = self.children[:0]
+        dy = 45
+        self.children = self.children[:1]
         for line in self.display:
             Text(self, line, (10,dy), GREEN, outlined=False, movable=False)
             dy += 35
@@ -456,9 +465,9 @@ class Terminal(Window):
                     self.display_print(file_str, False)
                     print('<file>', file, sep='\t')
         else:
-            self.display_print('This folder is empty')
+            self.display_print('This folder is empty', False)
             print('This folder is empty')
-        self.display_print(self.cwd, False)
+        self.display_print(self.cwd+' ', False)
 
     def open_file(self, file):
         elt_file = file.split('.')
@@ -528,28 +537,30 @@ class Terminal(Window):
 
     def clear_screen(self):
         self.display, self.prev_display, self.next_display = [],[],[]
-        self.display_print(self.cwd)
+        self.display_print(self.cwd+' ', False)
         print(self.cwd)
 
     def help_cmd(self):
         for line in self.helpcmd:
             self.display_print(line, False)
             print(line)
-        self.simulate()
+        self.display_print(self.cwd+' ', False)
 
     def history_up(self):
-        if len(self.display) == 10 and len(self.prev_display) != 0:
+        if len(self.display) == 15 and len(self.prev_display) != 0:
             x = self.prev_display.pop(-1)
             y = self.display.pop(-1)
             self.display.insert(0,x)
             self.next_display.insert(0,y)
+            self.draw_display()
 
     def history_down(self):
-        if len(display) == 10 and len(next_display) != 0:
+        if len(self.display) == 15 and len(self.next_display) != 0:
             x = self.display.pop(0)
             y = self.next_display.pop(0)
             self.prev_display.append(x)
             self.display.append(y)
+            self.draw_display()
    
 class Inbox(Window):
     """Create a mail app object"""
