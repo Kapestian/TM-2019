@@ -339,7 +339,7 @@ class Terminal(Window):
         super().do_event(event)
         if event.type == KEYDOWN:
             if event.key == K_k:        
-                pass
+                self.display.append('caca')
 
     def init_dir(self):
         dir_data = []
