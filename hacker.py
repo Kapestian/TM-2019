@@ -45,9 +45,9 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg',movable=True)"),('user_mail/mail1.png','App.running = False'))
+        #Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
         #Terminal(self,'windows2/terminal_win.png',(20,20))
-        #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
+        File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
         #debug
 
@@ -195,6 +195,8 @@ class File(Node):
             self.rect = rect 
         self.rect.topleft = pos
 
+        Button(self, root_folder+'button/close.png', (self.rect.width-30, -25))
+
     def draw(self, pos=(70,70)):
         """draw file object"""
         super().draw(pos)
@@ -284,8 +286,9 @@ class Window(Node):
         self.frame = pygame.image.load(root_folder+image)
         self.rect = self.frame.get_rect()
         self.rect.topleft = pos
-        self.right_corner = self.rect
         self.outlined = False
+
+        Button(self, root_folder+'button/close.png', (self.rect.width-30, 7))
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
