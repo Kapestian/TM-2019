@@ -56,8 +56,8 @@ class App:
         terminal.draw_display()
         terminal.previous_dir()
         terminal.draw_display()
-        #terminal.list_files()
-        #terminal.draw_display()
+        terminal.list_files()
+        terminal.draw_display()
 
     def run(self):
         """Run the main event loop."""
@@ -310,7 +310,6 @@ class Terminal(Window):
         self.display_obj = []
         self.prev_display = []
         self.next_display = []
-        self.dx = 10
         self.helpcmd =[
             'ls\t Display a list of a directory\'s files and subdirectories',
             'cd\t Change the current directory (ex: cd folder)',
@@ -419,15 +418,11 @@ class Terminal(Window):
 
     def draw_display(self):
         dy = 50
-        n=1
-        for child in self.children:
-            if n!=1:
-                self.children.remove(child)
-            n+=1
+        self.children = self.children[:0]
         for line in self.display:
-            Text(self,line,(self.dx,dy),GREEN, outlined=False)
-            dy += 40
-        self.dx += 125
+            Text(self, line, (10,dy), GREEN, outlined=False)
+            dy += 35
+
 
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
