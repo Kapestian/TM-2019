@@ -4,7 +4,7 @@ import os
 import pickle
 import time
 
-BLACK = (0, 0, 0) 
+BLACK = (0, 0, 0)#test maj
 GRAY = (127, 127, 127)
 WHITE = (255, 255, 255)
 GREEN = (0,255, 0)
