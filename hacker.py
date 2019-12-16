@@ -4,7 +4,7 @@ import os
 import pickle
 import time
 
-BLACK = (0, 0, 0) #test master
+BLACK = (0, 0, 0)
 GRAY = (127, 127, 127)
 WHITE = (255, 255, 255)
 GREEN = (0,255, 0)
@@ -404,6 +404,8 @@ class Terminal(Window):
             self.help_cmd()
         elif action == 'cls':
             self.clear_screen()
+        elif action == 'exit':
+            App.running = False
         else:
             self.display_print('unable to execute this command')
             print('unable to execute this command')
@@ -430,7 +432,7 @@ class Terminal(Window):
         dy = 45
         self.children = self.children[:1]
         for line in self.display:
-            Text(self, line, (10,dy), GREEN, outlined=False, movable=False)
+            Text(self, line, (10,dy), GREEN, 22, outlined=False, movable=False)
             dy += 35
 
 
