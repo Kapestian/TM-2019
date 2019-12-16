@@ -448,6 +448,8 @@ class Terminal(Window):
             self.cwd_level -= 1
             os.chdir('..')
             self.init_dir()
+        else:
+            self.display_print(self.cwd+' ', False)
 
     def get_cwd(self): #debug only
         print(self.cwd)
