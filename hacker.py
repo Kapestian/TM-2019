@@ -17,6 +17,8 @@ DARKGREEN = (0, 127,0)
 
 root_folder = os.getcwd()+'/'
 
+message1 = 'images/hacker.jpg'
+
 class App:
     """Create the application."""
     screen = None
@@ -35,13 +37,11 @@ class App:
 
         x, y = 20, 20
         dy = 120
-        terminal_icon = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
+        terminal_icon = Button(self, 'icons2/terminal.png',cmd="App.create_window(self,'Terminal')", pos=(x, y)); y += dy
         terminal_icon.movable = False
-        email_icon = Button(self, 'icons2/email.png', pos=(x, y),cmd="App.create_window(self,'Inbox')"); y += dy
+        email_icon = Button(self, 'icons2/email.png', cmd="App.create_window(self,'Inbox')", pos=(x, y)); y += dy
         email_icon.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
-        decryptor_icon.movable = False
-        #App.email_win = Icon(self, 'windows2/inbox_win.png', pos=(x, y)); y += dy
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
@@ -52,13 +52,11 @@ class App:
         #debug
 
 
-    def create_window(self, win):
+    def create_window(self, win, name=None, message=None):
         if win == 'File':
-            File(self.parent, 'pngfile', 'test.png','images/hacker.jpg', (300,150))
-        if win == 'start_mail':
-            File(self.parent, 'pngfile', 'test.png','images/hacker.jpg', (300,150))
+            File(self.parent, name, message, pos=(150,100))
         if win == 'Inbox':
-            Inbox(self.parent, 'windows2/inbox_win.png', (200,200))
+            Inbox(self.parent, 'windows2/inbox_win.png', (350,100))
         if win == 'Terminal':
             terminal = Terminal(self.parent,'windows2/terminal_win.png',(150,100))
 
@@ -180,21 +178,15 @@ class Text(Node):
             App.screen.blit(self.img, self.rect.move(pos))
 
 class File(Node):
-    def __init__(self, parent, ftype, name, content, rect=Rect(100, 100, 600, 400), pos=(90,90),**options):
+    def __init__(self, parent, name, content, rect=Rect(100, 100, 600, 400), pos=(100,100),**options):
         super().__init__(parent, pos)
-        print('File initiated')
+
         self.outlined = False
         self.movable = True
-        print(str(self.parent)+'hier')
         self.selectable = True
         self.name = name
-        self.file_type = ftype
-        if self.file_type == 'pngfile':
-            self.content = pygame.image.load(root_folder+content)
-            self.rect = self.content.get_rect()
-        else:
-            self.content = content 
-            self.rect = rect 
+        self.content = pygame.image.load(root_folder+content)
+        self.rect = self.content.get_rect()
         self.rect.topleft = pos
 
         Button(self, root_folder+'button/close.png', (self.rect.width-30, -25),'self.parent.hide()')
@@ -210,9 +202,7 @@ class File(Node):
             pygame.draw.rect(App.screen, LIGHTGRAY, self.rect,0)
             pygame.draw.rect(App.screen, BLUE, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, 30))
             pygame.draw.rect(App.screen, WHITE, (self.rect.topleft[0]+3, self.rect.topleft[1]+3, self.rect.width-6, self.rect.height-6))
-            if self.file_type == 'pngfile':
-                App.screen.blit(self.content, self.rect.topleft)
-
+            App.screen.blit(self.content, self.rect.topleft)
             pygame.draw.rect(App.screen, LIGHTGRAY, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, self.rect.height+30), 3)
             Text(self, self.name, (10,-22),LIGHTGRAY, 18, True, outlined=False, editable=False)
 
@@ -311,7 +301,7 @@ class Window(Node):
 
         Button(self, root_folder+'button/close.png', (self.rect.width-30, 7), 'print(self.parent); self.parent.hide()')
 
-    def draw(self, pos=(0, 0)):
+    def draw(self, pos=(100, 150)):
         """draw window object"""
         super().draw(pos)
         if self.visible:
@@ -337,6 +327,7 @@ class Terminal(Window):
     def __init__(self, parent, image, pos, level='level1'):
         super().__init__(parent, image, pos)
         os.chdir(root_folder)
+        self.editable = True
         self.root_folder = os.getcwd()
         self.cwd = '' #curent working directory
         self.cwd_level = 0 # +1 for every further directories
@@ -376,7 +367,7 @@ class Terminal(Window):
     
     def do_event(self, event):
         super().do_event(event)
-        if event.type == KEYDOWN:
+        if event.type == KEYDOWN and self.editable == True:
             if event.key == K_CAPSLOCK:        
                 self.display_print('test', False)
             elif event.key == K_RETURN:
@@ -618,12 +609,12 @@ class Inbox(Window):
 
     def __init__(self, parent, image, pos,):
         super().__init__(parent, image, pos)
-        dy = 100
         
-        Button(self, 'user_mail\mail1.png', (15, dy), "App.create_window(self.parent,'File')")
+        dy = 100
+        Button(self, 'user_mail\mail1.png', (15, dy), "App.create_window(self.parent,'File','test', message1)")
         dy += 70
 
-    def draw(self, pos=(0, 0)):
+    def draw(self, pos=(150, 100)):
         """draw inbox object"""
         super().draw(pos)
         for child in self.children:
