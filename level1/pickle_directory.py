@@ -9,4 +9,4 @@ def init_construct(folder_name, subdirs, lsfiles):
         pick = pickle.Pickler(datafile)
         pick.dump(data)
 
-init_construct('X:>',('inbox','folder1'), ('file1.txt', 'file2.png', 'file3.txt'))
+init_construct('X:>',None, None)
