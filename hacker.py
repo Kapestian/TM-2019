@@ -37,7 +37,7 @@ class App:
         dy = 120
         terminal_icon = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
         terminal_icon.movable = False
-        email_icon = Button(self, 'icons2/email.png', pos=(x, y),cmd='file.show()'); y += dy
+        email_icon = Button(self, 'icons2/email.png', pos=(x, y),cmd="App.create_window(self, self.parent,'File')"); y += dy
         email_icon.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
         decryptor_icon.movable = False
@@ -47,9 +47,13 @@ class App:
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
         #terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
-        file = File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
+        file1 = File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
         #debug
+        
+    def create_window(self,parent, win):
+        if win == 'File':
+            File(parent, 'pngfile', 'test.png', ('images/hacker.jpg'))
 
     def run(self):
         """Run the main event loop."""
@@ -145,18 +149,19 @@ class Node:
 
 class Text(Node):
     """Create an editable text object."""
-    def __init__(self, parent, text, pos=(0, 0), fontcolor=BLACK, fontsize=24, **options):
+    def __init__(self, parent, text, pos=(0, 0), fontcolor=BLACK, fontsize=24, bold=False, **options):
         super().__init__(parent, pos)
         self.text = text
         self.pos = pos
         self.fontcolor = fontcolor
         self.fontsize = fontsize
+        self.bold = bold
         self.render()
         self.__dict__.update(options)
 
     def render(self):
         """Create a surface image of the text."""
-        self.font = pygame.font.SysFont('consolas', self.fontsize)
+        self.font = pygame.font.SysFont('consolas', self.fontsize, self.bold)
         self.img = self.font.render(self.text, True, self.fontcolor)
         self.rect = self.img.get_rect()
         self.rect.topleft = self.pos
@@ -168,11 +173,12 @@ class Text(Node):
             App.screen.blit(self.img, self.rect.move(pos))
 
 class File(Node):
-    def __init__(self, parent, ftype, name, content, rect=Rect(100, 100, 600, 400), pos=(90,90)):
+    def __init__(self, parent, ftype, name, content, rect=Rect(100, 100, 600, 400), pos=(90,90),**options):
         super().__init__(parent, pos)
-        
+        print('File initiated')
         self.outlined = False
         self.movable = True
+        print(str(self.parent)+'hier')
         self.selectable = True
         self.name = name
         self.file_type = ftype
@@ -186,9 +192,12 @@ class File(Node):
 
         Button(self, root_folder+'button/close.png', (self.rect.width-30, -25),'self.parent.hide()')
         print(self.rect)
+        self.__dict__.update(options)
 
     def draw(self, pos=(70,70)):
         """draw file object"""
+        for child in self.children[1:]:
+            self.children.remove(child)
         super().draw(pos)
         if self.visible:
             pygame.draw.rect(App.screen, LIGHTGRAY, self.rect,0)
@@ -198,7 +207,7 @@ class File(Node):
                 App.screen.blit(self.content, self.rect.topleft)
 
             pygame.draw.rect(App.screen, LIGHTGRAY, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, self.rect.height+30), 3)
-            Text(self, self.name, (10,-22),LIGHTGRAY, 18, outlined=False, editable=False)
+            Text(self, self.name, (10,-22),LIGHTGRAY, 18, True, outlined=False, editable=False)
 
             for child in self.children:
                 child.draw(self.rect.topleft)
