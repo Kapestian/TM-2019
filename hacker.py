@@ -520,26 +520,16 @@ class Terminal(Window):
             with open(name, 'rb') as openedfile:
                 data_recover = pickle.Unpickler(openedfile)
                 file_data = data_recover.load()
-            datatype = file_data[0]
-            content = file_data[1]
-            encrypted = file_data[2]
+            path = file_data[0]
+            encrypted = file_data[1]
 
             #display file if not encrypted
             if encrypted:
                 self.display_print('this file is encrypted')
                 print('this file is encrypted')
 
-            elif datatype == 'txtfile':
-                self.display_print(f'text: {content}')
-                print(f'text: {content}')
-
-            elif datatype == 'pngfile':
-                self.display_print(f'image: {content}') # à modifier
-                print(f'image: {content}') # à modifier
-
-            elif datatype == 'msgfile':
-                self.display_print(f'e-mail: {content}')# à modifier
-                print(f'e-mail: {content}')# à modifier
+            else:
+                App.create_window('File', file, path)
 
         else:
             self.display_print('file does not exist')

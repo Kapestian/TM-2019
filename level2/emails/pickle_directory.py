@@ -9,4 +9,4 @@ def init_construct(folder_name, subdirs, lsfiles):
         pick = pickle.Pickler(datafile)
         pick.dump(data)
 
-init_construct('Y:\JAx99>',('E-mails'), ('ldc.txt'))
+init_construct('Y:\\JAx99\\emails>', None, ('SuperMuscs.msg','confirmation.msg','baguette.msg','demain.msg'))
