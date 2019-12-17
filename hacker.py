@@ -54,7 +54,9 @@ class App:
 
     def create_window(self, win):
         if win == 'File':
-            File(self.parent, 'pngfile', 'test.png','images/hacker.jpg', (300,200))
+            File(self.parent, 'pngfile', 'test.png','images/hacker.jpg', (300,150))
+        if win == 'start_mail':
+            File(self.parent, 'pngfile', 'test.png','images/hacker.jpg', (300,150))
         if win == 'Inbox':
             Inbox(self.parent, 'windows2/inbox_win.png', (200,200))
         if win == 'Terminal':
@@ -320,10 +322,14 @@ class Window(Node):
     def hide(self):
         print('hide', self, self.children)
         self.visible = False
-        for child in self.children:
-            child.visible = False
         self.editable = False
         self.selectable = False
+
+        for child in self.children:
+            child.visible = False
+            child.editable = False
+            child.selectable = False
+
 
 class Terminal(Window):
     """Create a terminal object."""
