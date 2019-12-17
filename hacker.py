@@ -28,7 +28,7 @@ class App:
         self.background_color = LIGHTBLUE
         self.title = 'Hacker Desktop Environment'
         self.children = []
-        self.flags = FULLSCREEN
+        self.flags = 0
         self.t0 = time.time()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
@@ -37,7 +37,7 @@ class App:
         dy = 120
         terminal_icon = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
         terminal_icon.movable = False
-        email_icon = Icon(self, 'icons2/email.png', pos=(x, y)); y += dy
+        email_icon = Button(self, 'icons2/email.png', pos=(x, y),cmd='file.show()'); y += dy
         email_icon.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
         decryptor_icon.movable = False
@@ -46,12 +46,10 @@ class App:
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
         #Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
-        terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
-        #File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
+        #terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
+        file = File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
         
         #debug
-        terminal.draw_display()
-
 
     def run(self):
         """Run the main event loop."""
@@ -97,6 +95,7 @@ class Node:
         self.time = 0
         self.__dict__.update(options)
 
+        
     def draw(self, pos):
         """Draw the node and its children."""
         if self.visible:
@@ -165,7 +164,8 @@ class Text(Node):
     def draw(self, pos):
         """Draw the text object."""
         super().draw(pos)
-        App.screen.blit(self.img, self.rect.move(pos))
+        if self.visible:
+            App.screen.blit(self.img, self.rect.move(pos))
 
 class File(Node):
     def __init__(self, parent, ftype, name, content, rect=Rect(100, 100, 600, 400), pos=(90,90)):
@@ -173,6 +173,7 @@ class File(Node):
         
         self.outlined = False
         self.movable = True
+        self.selectable = True
         self.name = name
         self.file_type = ftype
         if self.file_type == 'pngfile':
@@ -183,25 +184,40 @@ class File(Node):
             self.rect = rect 
         self.rect.topleft = pos
 
-        Button(self, root_folder+'button/close.png', (self.rect.width-30, -25))
+        Button(self, root_folder+'button/close.png', (self.rect.width-30, -25),'self.parent.hide()')
+        print(self.rect)
 
     def draw(self, pos=(70,70)):
         """draw file object"""
         super().draw(pos)
-        pygame.draw.rect(App.screen, LIGHTGRAY, self.rect,0)
-        pygame.draw.rect(App.screen, BLUE, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, 30))
-        pygame.draw.rect(App.screen, LIGHTGRAY, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, self.rect.height+30), 3)
-        pygame.draw.rect(App.screen, WHITE, (self.rect.topleft[0]+3, self.rect.topleft[1]+3, self.rect.width-6, self.rect.height-6))
-        
-        if self.file_type == 'pngfile':
-            App.screen.blit(self.content, self.rect.topleft)
-        
-        
+        if self.visible:
+            pygame.draw.rect(App.screen, LIGHTGRAY, self.rect,0)
+            pygame.draw.rect(App.screen, BLUE, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, 30))
+            pygame.draw.rect(App.screen, WHITE, (self.rect.topleft[0]+3, self.rect.topleft[1]+3, self.rect.width-6, self.rect.height-6))
+            if self.file_type == 'pngfile':
+                App.screen.blit(self.content, self.rect.topleft)
 
-        Text(self, self.name, (10,-22),LIGHTGRAY, 18, outlined=False, editable=False)
+            pygame.draw.rect(App.screen, LIGHTGRAY, (self.rect.topleft[0], self.rect.topleft[1]-30, self.rect.width, self.rect.height+30), 3)
+            Text(self, self.name, (10,-22),LIGHTGRAY, 18, outlined=False, editable=False)
 
+            for child in self.children:
+                child.draw(self.rect.topleft)
+
+    def hide(self):
+        print('hide', self, self.children)
+        self.visible = False
         for child in self.children:
-            child.draw(self.rect.topleft)
+            child.visible = False
+        self.editable = False
+        self.selectable = False
+
+    def show(self):
+        print('show', self, self.children)
+        self.visible = True
+        for child in self.children:
+            child.visible = True
+        self.editable = True
+        self.selectable = True      
 
 class Icon(Node):
     def __init__(self, parent, file, pos=(100, 100)):
@@ -233,7 +249,8 @@ class Button(Node):
 
     def draw(self, pos=(0, 0)):
         super().draw(pos)
-        App.screen.blit(self.img, self.rect.move(pos))
+        if self.visible:
+            App.screen.blit(self.img, self.rect.move(pos))
 
     def do_event(self, event):
         """Handle mouse clicks and key press events."""
@@ -276,15 +293,23 @@ class Window(Node):
         self.rect.topleft = pos
         self.outlined = False
 
-        Button(self, root_folder+'button/close.png', (self.rect.width-30, 7),'')
+        Button(self, root_folder+'button/close.png', (self.rect.width-30, 7), 'print(self.parent); self.parent.hide()')
 
     def draw(self, pos=(0, 0)):
         """draw window object"""
         super().draw(pos)
-        App.screen.blit(self.frame,self.rect.move(pos))
-        for child in self.children:
-            child.draw(self.rect.topleft)
+        if self.visible:
+            App.screen.blit(self.frame,self.rect.move(pos))
+            for child in self.children:
+                child.draw(self.rect.topleft)
 
+    def hide(self):
+        print('hide', self, self.children)
+        self.visible = False
+        for child in self.children:
+            child.visible = False
+        self.editable = False
+        self.selectable = False
 
 class Terminal(Window):
     """Create a terminal object."""
@@ -429,11 +454,12 @@ class Terminal(Window):
         self.draw_display()
 
     def draw_display(self):
-        dy = 45
-        self.children = self.children[:1]
-        for line in self.display:
-            Text(self, line, (10,dy), GREEN, 22, outlined=False, movable=False)
-            dy += 35
+        if self.visible:
+            dy = 45
+            self.children = self.children[:1]
+            for line in self.display:
+                Text(self, line, (10,dy), GREEN, 22, outlined=False, movable=False)
+                dy += 35
 
 
     def change_dir(self, newdir): #ajouter ligne curdir
