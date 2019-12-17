@@ -37,7 +37,7 @@ class App:
         dy = 120
         terminal_icon = Icon(self, 'icons2/terminal.png', pos=(x, y)); y += dy
         terminal_icon.movable = False
-        email_icon = Button(self, 'icons2/email.png', pos=(x, y),cmd="App.create_window(self, self.parent,'File')"); y += dy
+        email_icon = Button(self, 'icons2/email.png', pos=(x, y),cmd="App.create_window(self,'Inbox')"); y += dy
         email_icon.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
         decryptor_icon.movable = False
@@ -45,15 +45,20 @@ class App:
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
-        #Inbox(self, 'windows2/inbox_win.png', (40,40), ('user_mail/mail1.png',"File(self,'pngfile','test.png','images/hacker.jpg')"))
         #terminal = Terminal(self,'windows2/terminal_win.png',(20,20))
-        file1 = File(self, 'pngfile', 'test.png', ('images/hacker.jpg'))
+        #file1 = File(self, 'pngfile', 'test.png', 'images/hacker.jpg')
+        #Inbox(self, 'windows2/inbox_win.png', (60, 70))
         
         #debug
-        
-    def create_window(self,parent, win):
+
+
+    def create_window(self, win):
         if win == 'File':
-            File(parent, 'pngfile', 'test.png', ('images/hacker.jpg'))
+            File(self.parent, 'pngfile', 'test.png','images/hacker.jpg', (300,200))
+        if win == 'Inbox':
+            Inbox(self.parent, 'windows2/inbox_win.png', (200,200))
+        if win == 'Terminal':
+            terminal = Terminal(self.parent,'windows2/terminal_win.png',(150,100))
 
     def run(self):
         """Run the main event loop."""
@@ -325,7 +330,7 @@ class Terminal(Window):
 
     def __init__(self, parent, image, pos, level='level1'):
         super().__init__(parent, image, pos)
-
+        os.chdir(root_folder)
         self.root_folder = os.getcwd()
         self.cwd = '' #curent working directory
         self.cwd_level = 0 # +1 for every further directories
@@ -605,16 +610,12 @@ class Terminal(Window):
 class Inbox(Window):
     """Create a mail app object"""
 
-    def __init__(self, parent, image, pos, *mails):
+    def __init__(self, parent, image, pos,):
         super().__init__(parent, image, pos)
-
-        self.emails = mails
         dy = 100
-        for mail in self.emails:
-            img = mail[0]
-            cmd = mail[1]
-            Button(self, img, (15, dy), cmd)
-            dy += 70
+        
+        Button(self, 'user_mail\mail1.png', (15, dy), "App.create_window(self.parent,'File')")
+        dy += 70
 
     def draw(self, pos=(0, 0)):
         """draw inbox object"""
