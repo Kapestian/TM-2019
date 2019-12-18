@@ -331,8 +331,7 @@ class Terminal(Window):
         self.game_lvl = level #curent level
         self.deletable_files = ['preuve.png']
         self.deleted_files = []
-        self.display = []
-        self.display_obj = []
+        self.display = ['Welcome (type help for usage information)']
         self.prev_display = []
         self.next_display = []
         self.helpcmd =[
