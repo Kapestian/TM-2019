@@ -353,7 +353,7 @@ class Terminal(Window):
         # ces données seront "encryptées" avec un pickle
         self.clues = {'level1':'this is a clue', 'level2': 'this is another clue'}
         self.answers = {'level1':'the password is "pswrd"', 'level2': 'this is another answer'}
-        self.devices = {'172.685': ('pswrd', 'level2')}
+        self.devices = {'172.685': ('Jack', 'level2'),'182.842': ('20.12.18', 'level3'),'152.111': ('ferrari2000', 'level4')}
 
         os.chdir(level)
         print(f'Terminal starting folder <{level}>')
@@ -472,6 +472,11 @@ class Terminal(Window):
                 Text(self, line, (10,dy), GREEN, 22, outlined=False, movable=False)
                 dy += 35
 
+    def change_level(self, level):
+        os.chdir(root_folder+level)
+        self.cwd_level = 0
+        self.display_print('Access granted!',False)
+        self.init_dir()
 
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
@@ -538,8 +543,7 @@ class Terminal(Window):
     def access(self, target,password):
         if target in self.devices.keys():
             if self.devices[target][0] == password:
-                os.chdir(self.root_folder)
-                terminal = Terminal(self.devices[target][1])
+                self.change_level(self.devices[target][1])
             else:
                 self.display_print('wrong password')
                 print('wrong password')
