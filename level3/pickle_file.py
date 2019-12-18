@@ -7,4 +7,4 @@ def init_construct(file_name, path, encrypted):
     with open (file_name[:-4],'wb') as datafile:
         pick = pickle.Pickler(datafile)
         pick.dump(data)
-init_construct('pass.png','pass.png', True)
+init_construct('pass.png','pass.png', False)

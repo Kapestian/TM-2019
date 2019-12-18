@@ -42,6 +42,7 @@ class App:
         email_icon = Button(self, 'icons2/email.png', cmd="App.create_window(self,'Inbox')", pos=(x, y)); y += dy
         email_icon.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
+        decryptor_icon.movable=False
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
@@ -58,9 +59,9 @@ class App:
         if win == 'File':
             File(self.parent, name, content, pos=(100,50))
         if win == 'Inbox':
-            Inbox(self.parent, 'windows2/inbox_win.png', (350,100))
+            Inbox(self.parent, 'windows2/inbox_win.png', (325,100))
         if win == 'Terminal':
-            terminal = Terminal(self.parent,'windows2/terminal_win.png',(150,50))
+            terminal = Terminal(self.parent,'windows2/terminal_win.png',(350,50))
 
     def run(self):
         """Run the main event loop."""
@@ -319,7 +320,7 @@ class Window(Node):
 class Terminal(Window):
     """Create a terminal object."""
 
-    def __init__(self, parent, image, pos, level='level2'):
+    def __init__(self, parent, image, pos, level='level1'):
         super().__init__(parent, image, pos)
         os.chdir(root_folder)
         self.editable = True
@@ -329,7 +330,7 @@ class Terminal(Window):
         self.subdirs = None #avaible child directories
         self.lsfiles = None #avaible files
         self.game_lvl = level #curent level
-        self.deletable_files = ['file1.txt']
+        self.deletable_files = ['preuve.png']
         self.deleted_files = []
         self.display = []
         self.display_obj = []
@@ -442,7 +443,7 @@ class Terminal(Window):
         elif action == 'cls':
             self.clear_screen()
         elif action == 'exit':
-            App.running = False
+            super().hide()
         else:
             self.display_print('unable to execute this command')
             print('unable to execute this command')
@@ -507,7 +508,7 @@ class Terminal(Window):
                 self.display_print(dir_str, False)
                 print('<dir>', directory, sep='\t')
 
-        elif self.lsfiles != None:
+        if self.lsfiles != None:
             for file in self.lsfiles:
                 if file not in self.deleted_files:
                     file_str = '<file>  {}'.format(file)
@@ -534,11 +535,16 @@ class Terminal(Window):
 
                 #display file if not encrypted
                 if encrypted:
-                    self.display_print('this file is encrypted')
-                    print('this file is encrypted')
+                    if file in decrypted:
+                        App.create_window(self, 'File', file, os.getcwd()[40:]+'/'+ path)
+                        self.display_print(f'{file} opened')
+                    else:                   
+                        self.display_print('this file is encrypted')
+                        print('this file is encrypted')
 
                 else:
                     App.create_window(self, 'File', file, os.getcwd()[40:]+'/'+ path)
+                    self.display_print(f'{file} opened')
                     
             else:
                 self.display_print('file does not exist')
