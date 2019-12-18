@@ -343,7 +343,8 @@ class Terminal(Window):
             'access    Connect to another device (ex: access device,password)',
             'del       Delete specified file (ex: del file.txt)',
             'clue      Show level\'s clue' ,
-            'answer    Show level\'s answer',]
+            'answer    Show level\'s answer',
+            'exit      Close the terminal']
 
         # ces données seront "encryptées" avec un pickle
         self.clues = {'level1':'"le mot de passe est facile"', 'level2': '','level3':'', 'level4':''}
@@ -452,7 +453,8 @@ class Terminal(Window):
         if len(self.display) < 15 : #not full window
             self.display.append(text)
             if newline:
-                self.display.append(self.cwd+' ')
+                if len(self.display) < 15:
+                    self.display.append(self.cwd+' ')
 
         else: #full window
             stored = self.display.pop(0)
