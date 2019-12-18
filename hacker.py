@@ -13,12 +13,11 @@ LIGHTBLUE = (58, 110, 165)
 LIGHTGRAY = (212,208,200)
 DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
-DARKGREEN = (0, 127,0)
-TURQUOISE = (0, 255, 255)
+DARKGREEN = (0, 127, 0)
 
 root_folder = os.getcwd()+'/'
 
-message1 = 'images/hacker.jpg'
+message1 = 'images/message1.png'
 
 class App:
     """Create the application."""
@@ -53,9 +52,11 @@ class App:
         #debug
 
 
-    def create_window(self, win, name=None, message=None):
+    def create_window(self, win, name=None, content=None):
+        if win == 'in_File':
+            File(self.parent, name, content, pos=(150,100))
         if win == 'File':
-            File(self.parent, name, message, pos=(150,100))
+            File(self.parent, name, content, pos=(100,50))
         if win == 'Inbox':
             Inbox(self.parent, 'windows2/inbox_win.png', (350,100))
         if win == 'Terminal':
@@ -218,13 +219,6 @@ class File(Node):
         self.editable = False
         self.selectable = False
 
-    def show(self):
-        print('show', self, self.children)
-        self.visible = True
-        for child in self.children:
-            child.visible = True
-        self.editable = True
-        self.selectable = True      
 
 class Icon(Node):
     def __init__(self, parent, file, pos=(100, 100)):
@@ -325,12 +319,12 @@ class Window(Node):
 class Terminal(Window):
     """Create a terminal object."""
 
-    def __init__(self, parent, image, pos, level='level1'):
+    def __init__(self, parent, image, pos, level='level2'):
         super().__init__(parent, image, pos)
         os.chdir(root_folder)
         self.editable = True
         self.root_folder = os.getcwd()
-        self.cwd = '' #curent working directory
+        self.cwd = '' #curent working directory 
         self.cwd_level = 0 # +1 for every further directories
         self.subdirs = None #avaible child directories
         self.lsfiles = None #avaible files
@@ -476,7 +470,7 @@ class Terminal(Window):
             dy = 45
             self.children = self.children[:1]
             for line in self.display:
-                Text(self, line, (10,dy), TURQUOISE, 22, outlined=False, movable=False)
+                Text(self, line, (10,dy), WHITE, 22, outlined=False, movable=False)
                 dy += 35
 
     def change_level(self, level):
@@ -544,7 +538,8 @@ class Terminal(Window):
                     print('this file is encrypted')
 
                 else:
-                    App.create_window('File', file, path)
+                    App.create_window(self, 'File', file, os.getcwd()[40:]+'/'+ path)
+                    
             else:
                 self.display_print('file does not exist')
                 print('file does not exist')
@@ -615,7 +610,7 @@ class Inbox(Window):
         super().__init__(parent, image, pos)
         
         dy = 100
-        Button(self, root_folder+'user_mail\mail1.png', (15, dy), "App.create_window(self.parent,'File','test', message1)")
+        Button(self, root_folder+'user_mail\mail1.png', (15, dy), "App.create_window(self.parent,'in_File','Urgent.msg', message1)")
         dy += 70
 
     def draw(self, pos=(150, 100)):

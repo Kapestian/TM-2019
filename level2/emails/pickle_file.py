@@ -8,7 +8,6 @@ def init_construct(file_name, path, encrypted=False):
         pick = pickle.Pickler(datafile)
         pick.dump(data)
 
-init_construct('SuperMuscs.msg','SuperMuscs.png')
+init_construct('supermuscs.msg','SuperMuscs.png')
 init_construct('confirmation.msg','confirmation.png')
-init_construct('baguette.msg','baguette.png')
 init_construct('demain.msg','demain.png')
