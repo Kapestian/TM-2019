@@ -14,6 +14,7 @@ LIGHTGRAY = (212,208,200)
 DARKRED = (127, 0, 0)
 DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127,0)
+TURQUOISE = (0, 255, 255)
 
 root_folder = os.getcwd()+'/'
 
@@ -30,7 +31,7 @@ class App:
         self.background_color = LIGHTBLUE
         self.title = 'Hacker Desktop Environment'
         self.children = []
-        self.flags = 0
+        self.flags = FULLSCREEN
         self.t0 = time.time()
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
         pygame.display.set_caption(self.title)
@@ -58,7 +59,7 @@ class App:
         if win == 'Inbox':
             Inbox(self.parent, 'windows2/inbox_win.png', (350,100))
         if win == 'Terminal':
-            terminal = Terminal(self.parent,'windows2/terminal_win.png',(150,100))
+            terminal = Terminal(self.parent,'windows2/terminal_win.png',(150,50))
 
     def run(self):
         """Run the main event loop."""
@@ -351,8 +352,8 @@ class Terminal(Window):
             'answer    Show level\'s answer',]
 
         # ces données seront "encryptées" avec un pickle
-        self.clues = {'level1':'this is a clue', 'level2': 'this is another clue'}
-        self.answers = {'level1':'the password is "pswrd"', 'level2': 'this is another answer'}
+        self.clues = {'level1':'"le mot de passe est facile"', 'level2': '','level3':'', 'level4':''}
+        self.answers = {'level1':'"la solution est "access 172.685,Jack"', 'level2': '"la solution est "access 182.842,20.12.18""','level3':'"la solution est "access 152.111,ferrari2000""'}
         self.devices = {'172.685': ('Jack', 'level2'),'182.842': ('20.12.18', 'level3'),'152.111': ('ferrari2000', 'level4')}
 
         os.chdir(level)
@@ -424,10 +425,14 @@ class Terminal(Window):
         elif action == 'open':
             self.open_file(arg)
         elif action == 'access':
-            arg2 = arg.split(',')
-            target = arg2[0]
-            password = arg2[1]
-            self.access(target, password)
+            if arg != None:
+                try:
+                    arg2 = arg.split(',')
+                    target = arg2[0]
+                    password = arg2[1]
+                    self.access(target, password)
+                except:
+                    self.display_print('error')
         elif action == 'del':
             self.del_file(arg)
         elif action == 'clue':
@@ -436,6 +441,8 @@ class Terminal(Window):
             self.get_answer()
         elif action == 'cwd':
             self.get_cwd() #debug only
+        elif action[:5] =='level':
+            self.change_level(action)
         elif action == 'help':
             self.help_cmd()
         elif action == 'cls':
@@ -469,7 +476,7 @@ class Terminal(Window):
             dy = 45
             self.children = self.children[:1]
             for line in self.display:
-                Text(self, line, (10,dy), GREEN, 22, outlined=False, movable=False)
+                Text(self, line, (10,dy), TURQUOISE, 22, outlined=False, movable=False)
                 dy += 35
 
     def change_level(self, level):
@@ -477,6 +484,7 @@ class Terminal(Window):
         self.cwd_level = 0
         self.display_print('Access granted!',False)
         self.init_dir()
+        self.game_lvl= level
 
     def change_dir(self, newdir): #ajouter ligne curdir
         if self.subdirs != None and newdir in self.subdirs:
@@ -499,12 +507,13 @@ class Terminal(Window):
         print(self.cwd)
 
     def list_files(self): #blit chaque ligne
-        if self.lsfiles != None:
+        if self.subdirs != None:
             for directory in self.subdirs:
                 dir_str = '<dir>   {}'.format(directory)
                 self.display_print(dir_str, False)
                 print('<dir>', directory, sep='\t')
 
+        elif self.lsfiles != None:
             for file in self.lsfiles:
                 if file not in self.deleted_files:
                     file_str = '<file>  {}'.format(file)
@@ -520,39 +529,40 @@ class Terminal(Window):
         name = elt_file[0]
         #extension = elt_file[1]
 
-        if file in self.lsfiles and file not in self.deleted_files:
-            #reading file datas
-            with open(name, 'rb') as openedfile:
-                data_recover = pickle.Unpickler(openedfile)
-                file_data = data_recover.load()
-            path = file_data[0]
-            encrypted = file_data[1]
+        if self.lsfiles != None:
+            if file in self.lsfiles and file not in self.deleted_files:
+                #reading file datas
+                with open(name, 'rb') as openedfile:
+                    data_recover = pickle.Unpickler(openedfile)
+                    file_data = data_recover.load()
+                path = file_data[0]
+                encrypted = file_data[1]
 
-            #display file if not encrypted
-            if encrypted:
-                self.display_print('this file is encrypted')
-                print('this file is encrypted')
+                #display file if not encrypted
+                if encrypted:
+                    self.display_print('this file is encrypted')
+                    print('this file is encrypted')
 
+                else:
+                    App.create_window('File', file, path)
             else:
-                App.create_window('File', file, path)
+                self.display_print('file does not exist')
+                print('file does not exist')
+        else: self.display_print('file does not exist')
 
-        else:
-            self.display_print('file does not exist')
-            print('file does not exist')
-        
     def access(self, target,password):
         if target in self.devices.keys():
             if self.devices[target][0] == password:
                 self.change_level(self.devices[target][1])
             else:
                 self.display_print('wrong password')
-                print('wrong password')
+                print('Access denied!')
         else:
             self.display_print('target device not found')
             print('target device not found')
 
     def del_file(self, file):
-        if file in self.lsfiles:
+        if self.lsfiles != None and file in self.lsfiles:
             if file in self.deletable_files:
                 self.deleted_files.append(file)
                 self.display_print('file deleted')
@@ -605,7 +615,7 @@ class Inbox(Window):
         super().__init__(parent, image, pos)
         
         dy = 100
-        Button(self, 'user_mail\mail1.png', (15, dy), "App.create_window(self.parent,'File','test', message1)")
+        Button(self, root_folder+'user_mail\mail1.png', (15, dy), "App.create_window(self.parent,'File','test', message1)")
         dy += 70
 
     def draw(self, pos=(150, 100)):

@@ -9,4 +9,4 @@ def init_construct(folder_name, subdirs, lsfiles):
         pick = pickle.Pickler(datafile)
         pick.dump(data)
 
-init_construct('Z:\\Hug0\\emails>',None, ('sécuritémax.msg'))
+init_construct('Z:\\Hug0\\emails>',None, ('sécuritémax.msg',))

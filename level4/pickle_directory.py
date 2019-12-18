@@ -9,4 +9,4 @@ def init_construct(folder_name, subdirs, lsfiles):
         pick = pickle.Pickler(datafile)
         pick.dump(data)
 
-init_construct('Secure_server>',None, ('preuve.png'))
+init_construct('Secure_server>',None, ('preuve.png',))
