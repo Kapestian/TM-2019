@@ -16,7 +16,6 @@ DARKBLUE = (0, 0, 127)
 DARKGREEN = (0, 127, 0)
 
 root_folder = os.getcwd()+'/'
-
 message1 = 'images/message1.png'
 
 class App:
@@ -42,7 +41,7 @@ class App:
         email_icon = Button(self, 'icons2/email.png', cmd="App.create_window(self,'Inbox')", pos=(x, y)); y += dy
         email_icon.movable = False
         decryptor_icon = Icon(self, 'icons2/decrypt.png', pos=(x, y)); y += dy
-        decryptor_icon.movable=False
+        decryptor_icon.movable = False
         Rectangle(self, Rect(0, 660, 1920, 65))
         quit_button = Button(self, "button/shutdown.png", pos=(10, 665), cmd='App.running = False')
 
@@ -535,12 +534,8 @@ class Terminal(Window):
 
                 #display file if not encrypted
                 if encrypted:
-                    if file in decrypted:
-                        App.create_window(self, 'File', file, os.getcwd()[40:]+'/'+ path)
-                        self.display_print(f'{file} opened')
-                    else:                   
-                        self.display_print('this file is encrypted')
-                        print('this file is encrypted')
+                    self.display_print('this file is encrypted')
+                    print('this file is encrypted')
 
                 else:
                     App.create_window(self, 'File', file, os.getcwd()[40:]+'/'+ path)
