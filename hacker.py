@@ -435,7 +435,7 @@ class Terminal(Window):
             self.get_answer()
         elif action == 'cwd':
             self.get_cwd() #debug only
-        elif action[:5] =='level':
+        elif action[:5] =='level': #debug on the game
             self.change_level(action)
         elif action == 'help':
             self.help_cmd()
