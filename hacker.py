@@ -539,7 +539,7 @@ class Terminal(Window):
                     print('this file is encrypted')
 
                 else:
-                    App.create_window(self, 'File', file, os.getcwd()[40:]+'/'+ path)
+                    App.create_window(self, 'File', file, os.getcwd()+'/'+ path)
                     self.display_print(f'{file} opened')
                     
             else:
